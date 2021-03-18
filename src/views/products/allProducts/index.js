@@ -11,13 +11,13 @@ import {
 } from '@coreui/react'
 import { DocsLink } from 'src/reusable'
 
-const Badges = () => {
+const AllProducts = () => {
   return (
     <CRow>
       <CCol xs="12" md="6">
         <CCard>
           <CCardHeader>
-            Badges
+            ALL PRODUCTS
             <DocsLink name="CBadge"/>
           </CCardHeader>
           <CCardBody>
@@ -89,4 +89,4 @@ const Badges = () => {
   )
 }
 
-export default Badges
+export default AllProducts
