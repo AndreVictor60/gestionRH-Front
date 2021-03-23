@@ -1,33 +1,43 @@
-import React from 'react'
+import React, { Component } from 'react'
 import {
   CBadge,
   CDropdown,
   CDropdownItem,
   CDropdownMenu,
-  CDropdownToggle,
-  CImg
+  CDropdownToggle
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import AuthService from "../services/auth.service";
+import { withRouter } from 'react-router-dom';
 
-const TheHeaderDropdown = () => {
-  const logOutClick = (e) => {
-    AuthService.logout();
-    console.log("vous êtes déco");
+class TheHeaderDropdown extends Component {
+  constructor(props) {
+    super(props);
+    
+    this.state = {
+      username: "",
+      password: "",
+      loading: false,
+      message: ""
+    };
   }
-  return (
-    <CDropdown
+
+  logOutClick () {
+    AuthService.logout();
+    this.props.history.push("/login");
+  }
+  
+  render() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    return (
+      <CDropdown
       inNav
       className="c-header-nav-items mx-2"
       direction="down"
     >
       <CDropdownToggle className="c-header-nav-link" caret={false}>
-        <div className="c-avatar">
-          <CImg
-            src={'avatars/6.jpg'}
-            className="c-avatar-img"
-            alt="admin"
-          />
+        <div>
+          <p>{user}</p>
         </div>
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
@@ -85,13 +95,19 @@ const TheHeaderDropdown = () => {
           <CBadge color="primary" className="mfs-auto">42</CBadge>
         </CDropdownItem>
         <CDropdownItem divider />
-        <CDropdownItem onClick={logOutClick}>
+        <CDropdownItem >
           <CIcon name="cil-lock-locked" className="mfe-2" />
-          Deconnexion
+            Deconnexion 
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>
-  )
+    )
+  }
 }
 
-export default TheHeaderDropdown
+export default withRouter(TheHeaderDropdown)
+/**
+ * TODO
+ * 
+ * mettre un lien deconnexion avec redirect vers la page Login
+ */

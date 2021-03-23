@@ -13,7 +13,7 @@ import {
   import CIcon from '@coreui/icons-react'
 
 import { connect } from "react-redux";
-import { login } from "../../../redux/actions/actionCreatorAuthentification";
+import { login } from "../redux/actions/actionCreatorAuthentification";
 
 class Authentification extends Component {
   constructor(props) {

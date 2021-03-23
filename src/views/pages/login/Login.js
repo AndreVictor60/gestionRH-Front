@@ -6,7 +6,7 @@ import {
   CContainer,
   CRow
 } from '@coreui/react'
-import Authentification from "../../../component/redux/authenfication/Authentification";
+import Authentification from "../../../component/Authentification";
 
 const Login = () => {
   return (
