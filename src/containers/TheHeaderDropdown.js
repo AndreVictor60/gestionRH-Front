@@ -8,8 +8,13 @@ import {
   CImg
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import AuthService from "../services/auth.service";
 
 const TheHeaderDropdown = () => {
+  const logOutClick = (e) => {
+    AuthService.logout();
+    console.log("vous êtes déco");
+  }
   return (
     <CDropdown
       inNav
@@ -80,9 +85,9 @@ const TheHeaderDropdown = () => {
           <CBadge color="primary" className="mfs-auto">42</CBadge>
         </CDropdownItem>
         <CDropdownItem divider />
-        <CDropdownItem>
+        <CDropdownItem onClick={logOutClick}>
           <CIcon name="cil-lock-locked" className="mfe-2" />
-          Lock Account
+          Deconnexion
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>

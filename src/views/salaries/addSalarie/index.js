@@ -10,12 +10,14 @@ import {
   CRow
 } from '@coreui/react'
 import { DocsLink } from 'src/reusable'
+import Home from '../../../component/Home.compoment';
 
 const AddSalarie = () => {
   return (
     <CRow>
       <CCol xs="12" md="6">
         <CCard>
+        <Home/>
           <CCardHeader>
           AddSalarie
             <DocsLink name="CBadge"/>
