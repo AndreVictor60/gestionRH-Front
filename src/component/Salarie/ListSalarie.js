@@ -1,6 +1,15 @@
 import React, { Component } from "react";
 import SalariesService from "../../services/salaries.service";
-
+function formatDate(string){
+  let datePoste = new Date(string).getTime();
+  let dateCurrent = new Date().getTime();
+  console.log("dateCurrent",dateCurrent)
+  if(datePoste < dateCurrent){
+    return false;
+  }else{
+    return true;
+  }
+}
 class ListSalarie extends Component {
     constructor(props) {
       super(props);
@@ -9,7 +18,7 @@ class ListSalarie extends Component {
       //this.refreshList = this.refreshList.bind(this);
       this.setActiveSalarie = this.setActiveSalarie.bind(this);
       //this.searchTitle = this.searchTitle.bind(this);
-      
+
       this.state = {
         salaries: []
       };
@@ -67,10 +76,9 @@ class ListSalarie extends Component {
           console.log(e);
         });
     }*/
-  
+
     render() {
         const { salaries } = this.state;
-    
         return (
             <>
             <div className="row mt-4">
@@ -96,7 +104,7 @@ class ListSalarie extends Component {
                               <td></td>
                           }
                           {salarie.postes.length !== 0 ? 
-                              salarie.postes.map(poste => <td key={poste.id}>{poste.titrePoste.intitule}</td>):<td></td>   
+                              salarie.postes.map(poste => <td key={poste.id}>{poste.dateFin !== null ? (formatDate(poste.dateFin) ? (poste.titrePoste.intitule) : ""):(poste.titrePoste.intitule)}</td>):<td></td>   
                           }
                           {salarie.postes.length !== 0 ? 
                               salarie.postes.map(poste => <td key={poste.id}>{poste.manager !== null ? (poste.manager.nom + " " + poste.manager.prenom) : ' '}</td>):<td></td>
