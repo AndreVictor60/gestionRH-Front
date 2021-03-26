@@ -100,19 +100,15 @@ class ListSalarie extends Component {
                         {console.log(salarie.postes.length,"salarie.postes.length")}
                           {salarie.postes.length !== 0 ? salarie.postes.map(poste => 
                             <>
-                            {poste.dateFin === null || formatDate(poste.dateFin) ? (
+                            {(poste.dateFin === null || formatDate(poste.dateFin)) && (
                               <>
                               <td>{poste.typeContrat.type}</td>
                               <td>{poste.titrePoste.intitule}</td>
                               <td>{poste.manager !== null ? (poste.manager.nom + " " + poste.manager.prenom) : ' '}</td>
                               </>
-                              ):(
-                                <>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                </>
-                              )}
+                              )
+                                
+                              }
                             </>
                           ):(
                             <>

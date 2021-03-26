@@ -49,6 +49,42 @@ const _nav =  [
     ],
   },
   {
+    _tag: 'CSidebarNavDropdown',
+    name: 'Type de contrat',
+    route: '/type-contrat',
+    icon: 'cil-puzzle',
+    _children: [
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Liste des types de contrat',
+        to: '/type-contrat/liste',
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Création d\'un types de contrat',
+        to: '/type-contrat/creation',
+      }
+    ],
+  },
+  {
+    _tag: 'CSidebarNavDropdown',
+    name: 'Domaine',
+    route: '/domaine',
+    icon: 'cil-puzzle',
+    _children: [
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Liste des domaines',
+        to: '/domaine/liste',
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Création d\'un domaines',
+        to: '/domaine/creation',
+      }
+    ],
+  },
+  {
     _tag: 'CSidebarNavDivider'
   },
   {
