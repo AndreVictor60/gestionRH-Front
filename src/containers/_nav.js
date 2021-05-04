@@ -26,7 +26,7 @@ const _nav =  [
       {
         _tag: 'CSidebarNavItem',
         name: 'Ajout d\'un salarie',
-        to: '/salaries/add-salarie',
+        to: '/salaries/creation',
       },
     ],
   },
@@ -44,7 +44,7 @@ const _nav =  [
       {
         _tag: 'CSidebarNavItem',
         name: 'Ajout d\'une adresse',
-        to: '/adresses/add-adresse',
+        to: '/adresses/creation',
       },
     ],
   },{

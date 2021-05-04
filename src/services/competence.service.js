@@ -4,7 +4,7 @@ import authHeader from './auth-header';
 const API_URL = 'http://localhost:8080/api/competences';
 
 class CompetenceService {
-    getAllCompetence() {
+  getAllCompetence() {
     return axios.get(API_URL , { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
   countCompetence() {
