@@ -2,7 +2,7 @@ import React from 'react'
 import { CButton, CCard, CCardBody, CCardFooter, CCardHeader, CCol, CRow } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
-import usersData from '../../users/UsersData'
+import usersData from '../users/UsersData'
 
 const ProfilSalarie = ({match}) => {
   const user = usersData.find( user => user.id.toString() === match.params.id)

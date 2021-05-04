@@ -1,8 +1,9 @@
 import { CButton } from "@coreui/react";
 import React, { Component } from "react";
 import AdressesService from "../../services/adresses.service";
+import { withRouter } from "react-router-dom";
 
-export default class Adresse extends Component {
+ class CreateAdresse extends Component {
   constructor(props) {
     super(props);
     this.onChangeNumero = this.onChangeNumero.bind(this);
@@ -110,7 +111,7 @@ export default class Adresse extends Component {
           id: response.data.id,
           submitted: true
         });
-        console.log(response.data);
+        this.props.history.push("/adresses/liste");
       })
       .catch(e => {
         console.log(e);
@@ -123,11 +124,6 @@ export default class Adresse extends Component {
 
     return (
         <div className="submit-form">
-          {this.state.submitted ? (
-            <div>
-              <h4>Vous avez envoyé avec succès!</h4>
-            </div>
-          ) : (
             <div>
             <form>
               <div className="form-group">
@@ -159,8 +155,9 @@ export default class Adresse extends Component {
                 Créer une adresse
             </CButton>
             </div>
-          )}
         </div>
       );
   }
 }
+
+export default withRouter(CreateAdresse);
