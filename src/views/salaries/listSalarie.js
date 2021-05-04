@@ -10,7 +10,7 @@ import {
 /*import CIcon from '@coreui/icons-react'*/
 //import { Link } from 'react-router-dom'
 import CIcon from '@coreui/icons-react'
-import ListSalarie from '../../../component/Salarie/ListSalarie';
+import ListSalarie from '../../component/Salarie/ListSalarie';
 
 class AllSalaries extends Component {
   constructor(props) {
@@ -32,7 +32,7 @@ class AllSalaries extends Component {
               <CCardBody>
               <CRow className="align-items-right mt-3">
                 <CCol xl md={{ span: 2, offset: 10 }}>
-                    <CButton className="float-right" block variant="outline" color="info">
+                    <CButton className="float-right" block variant="outline" color="info" to="/salaries/creation">
                       <CIcon name="cil-user" />  Ajout d'un salarié
                     </CButton>
                 </CCol>

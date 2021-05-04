@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import AdressesService from "../../services/adresses.service";
 import { withRouter } from "react-router-dom";
 
- class CreateAdresse extends Component {
+class UpdateAdresse extends Component {
   constructor(props) {
     super(props);
     this.onChangeNumero = this.onChangeNumero.bind(this);
@@ -12,7 +12,8 @@ import { withRouter } from "react-router-dom";
     this.onChangeVille = this.onChangeVille.bind(this);
     this.onChangeCodePostal = this.onChangeCodePostal.bind(this);
     this.onChangePays = this.onChangePays.bind(this);
-    this.saveAdresse = this.saveAdresse.bind(this);
+    this.getAdresse = this.getAdresse.bind(this);
+    this.updateAdresse = this.updateAdresse.bind(this);
     //this.deleteTutorial = this.deleteTutorial.bind(this);
 
     this.state = {
@@ -26,14 +27,17 @@ import { withRouter } from "react-router-dom";
         pays: "",
         version: null
       },
-      message: "",
-      submitted: false
+      message: ""
     };
-  } 
-  
+  }
+
+  componentDidMount() {
+   this.getAdresse(this.props.adresseid.id);
+  }
+
   onChangeNumero(e) {
     const numero = e.target.value;
-    console.log('numero',numero)
+
     this.setState(function(prevState) {
       return {
         currentAdresse: {
@@ -95,25 +99,36 @@ import { withRouter } from "react-router-dom";
     }));
   }
 
-  saveAdresse() {
-    var data = {
-      numero: this.state.currentAdresse.numero,
-      voie: this.state.currentAdresse.voie,
-      complementAdresse: this.state.currentAdresse.complementAdresse,
-      ville: this.state.currentAdresse.ville,
-      codePostal: this.state.currentAdresse.codePostal,
-      pays: this.state.currentAdresse.pays
-    }
-
-    AdressesService.save(data)
+  getAdresse(id) {
+    AdressesService.getAdresseById(id)
       .then(response => {
         this.setState({
-          id: response.data.id,
-          submitted: true
+            currentAdresse: response.data
+        });
+        console.log(response.data);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
+
+
+  updateAdresse() {
+    AdressesService.update(
+      this.state.currentAdresse
+    )
+      .then(response => {
+        console.log(response.data);
+        this.setState({
+            currentAdresse: response.data,
+            message: "Modification bien prise en compte !"
         });
         this.props.history.push("/adresses/liste");
       })
       .catch(e => {
+        this.setState({
+            message: e.message
+          });
         console.log(e);
       });
   }
@@ -123,8 +138,8 @@ import { withRouter } from "react-router-dom";
     const { currentAdresse } = this.state;
 
     return (
-        <div className="submit-form">
-            <div>
+      <div>
+          <div className="edit-form">
             <form>
               <div className="form-group">
                 <label htmlFor="numero">Numéro</label>
@@ -151,13 +166,14 @@ import { withRouter } from "react-router-dom";
                 <input type="text" className="form-control" id="pays" value={currentAdresse.pays}  onChange={this.onChangePays}/>
               </div>
             </form>
-            <CButton type="submit" block  color="info" onClick={this.saveAdresse}>
-                Créer une adresse
+            <CButton type="submit" block  color="info" onClick={this.updateAdresse}>
+                Modifier
             </CButton>
-            </div>
-        </div>
-      );
+            <p>{this.state.message}</p>
+          </div>
+      </div>
+    );
   }
 }
 
-export default withRouter(CreateAdresse);
+export default withRouter(UpdateAdresse);

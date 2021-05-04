@@ -3,8 +3,9 @@ import React, { Component } from "react";
 import EntreprisesService from "../../services/entreprises.service";
 import AdressesService from "../../services/adresses.service";
 import { CButton, CSelect } from "@coreui/react";
+import { withRouter } from "react-router-dom";
 
-export default class Adresse extends Component {
+class UpdateEntreprise extends Component {
   constructor(props) {
     super(props);
     this.onChangeNom = this.onChangeNom.bind(this);
@@ -24,7 +25,7 @@ export default class Adresse extends Component {
             },
             version: null
         },
-        errors: [],
+        error: false,
         message: ""
     };
   }
@@ -34,19 +35,27 @@ export default class Adresse extends Component {
    this.getAllAdresses();
   }
 
-  componentDidUpdate(){
-    console.log("Nouveau state",this.state)
-  }
-
   onChangeNom(e) {
     const nom = e.target.value;
-
-    this.setState(prevState => ({
+    if (0 !== nom.length) {
+      this.setState((prevState) => ({
         currentEntreprise: {
           ...prevState.currentEntreprise,
-          nom: nom
-        }
-    }));
+          nom: nom,
+        },
+        error: false,
+        errorEmptyNom: "",
+      }));
+    } else {
+      this.setState((prevState) => ({
+        currentEntreprise: {
+          ...prevState.currentEntreprise,
+          nom: nom,
+        },
+        error: true,
+        errorEmptyNom: "Le nom est vide",
+      }));
+    }
   }
 
   onChangeAdresse(e) {
@@ -69,7 +78,6 @@ export default class Adresse extends Component {
         this.setState({
             currentEntreprise: response.data
         });
-        console.log(response.data);
       })
       .catch(e => {
         console.log(e);
@@ -82,7 +90,6 @@ export default class Adresse extends Component {
       this.setState({
         adresses: response.data
       });
-      console.log(response.data);
     })
     .catch(e => {
       console.log(e);
@@ -91,27 +98,36 @@ export default class Adresse extends Component {
 
 
   updateEntreprise() {
-    EntreprisesService.update(
-      this.state.currentEntreprise
-    )
-      .then(response => {
-        console.log(response.data);
-        this.setState({
-            currentEntreprise: response.data,
-            message: "Modification bien prise en compte !"
-        });
-      })
-      .catch(e => {
-        this.setState({
-            message: e.message
-          });
-        console.log(e);
+    if (!this.state.currentEntreprise.nom ||0 === this.state.currentEntreprise.nom.length)
+    {
+      this.setState({
+        error: true,
+        errorEmptyNom: "Le nom est vide",
       });
+    }
+    if (this.state.error === false) {
+      EntreprisesService.update(
+        this.state.currentEntreprise
+      )
+        .then(response => {
+          this.setState({
+              currentEntreprise: response.data,
+              message: "Modification bien prise en compte !"
+          });
+          this.props.history.push("/entreprises/liste");
+        })
+        .catch(e => {
+          this.setState({
+              message: e.message
+            });
+          console.log(e);
+        });
+    }
   }
 
 
   render() {
-    const { currentEntreprise, adresses } = this.state;
+    const { currentEntreprise, adresses, errorEmptyNom } = this.state;
     return (
         <div>
           <div className="edit-form">
@@ -119,13 +135,14 @@ export default class Adresse extends Component {
               <div className="form-group">
                 <label htmlFor="nom">Nom</label>
                 <input type="text" className="form-control" id="nom" value={currentEntreprise.nom} onChange={this.onChangeNom}/>
+                <span className="text-danger">{errorEmptyNom}</span>
               </div>
               
               <div className="form-group">
-                    <CSelect value={currentEntreprise.adresse.id} custom name="adresse" id="adresse" onChange={this.onChangeAdresse}>
+                    <CSelect value={currentEntreprise.adresse.id === null ? 1 : currentEntreprise.adresse.id } custom name="adresse" id="adresse" onChange={this.onChangeAdresse}>
                         <option  disabled value="0">Veuillez sélectionner une adresse</option>
                             {adresses.map((adresse) => (
-                            <option value={adresse.id}>{adresse.numero + " " + adresse.voie + " " +adresse.ville}</option>
+                            <option key={adresse.id} value={adresse.id}>{adresse.numero + " " + adresse.voie + " " +adresse.ville}</option>
                             ))}
                     </CSelect>
               </div>
@@ -140,9 +157,10 @@ export default class Adresse extends Component {
   }
 }
 
+export default withRouter(UpdateEntreprise)
+
 /**
  * TODO :
  * 
  *  Select Adresse faut le trier par VILLE 
- *  Vérifier si l'adresse existe bien
  */

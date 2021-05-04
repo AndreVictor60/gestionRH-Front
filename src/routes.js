@@ -5,11 +5,12 @@ const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
 const Users = React.lazy(() => import('./views/users/Users'));
 const User = React.lazy(() => import('./views/users/User'));
 
-const AllSalaries = React.lazy(() => import('./views/salaries/allSalaries'));
+const AllSalaries = React.lazy(() => import('./views/salaries/listSalarie'));
 const AddSalarie = React.lazy(() => import('./views/salaries/addSalarie'));
 const ProfilSalarie = React.lazy(() => import('./views/salaries/profilSalarie'));
 const AllAdresses = React.lazy(() => import('./views/adresses/allAdresses'));
 const Adresse = React.lazy(() => import('./views/adresses/Adresse'));
+//const UpdateAdresse = React.lazy(() => import('./views/adresses/Adresse'))
 const AllEntreprise = React.lazy(() => import('./views/entreprise/allEntreprise'));
 const UpdateEntreprise = React.lazy(() => import('./views/entreprise/updateEntreprise'));
 const CreateEntreprise = React.lazy(() => import('./views/entreprise/createEntreprise'));
@@ -30,17 +31,17 @@ const AllTitrePoste = React.lazy(() => import('./views/titre-poste/allTitrePoste
 const CreateTitrePoste = React.lazy(() => import('./views/titre-poste/creation-titre-poste'));
 
 const routes = [
-  { path: '/', exact: true, name: 'Home' },
+  { path: '/', exact: true, name: 'Home', component: Dashboard },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/users', exact: true,  name: 'Users', component: Users },
   { path: '/users/:id', exact: true, name: 'User Details', component: User },
   { path: '/salaries', exact: true, name: 'Salaries', component: AllSalaries },
   { path: '/salaries/liste', name: 'Listes des salaries', component: AllSalaries },
-  { path: '/salaries/add-salarie', name: 'Ajout dun salarie', component: AddSalarie },
+  { path: '/salaries/creation', name: 'Ajout dun salarie', component: AddSalarie },
   { path: '/salaries/profil/:id', exact: true, name: 'Profil', component: ProfilSalarie },
   { path: '/adresses', exact: true, name: 'Adresses', component: AllAdresses },
   { path: '/adresses/liste',exact: true, name: 'Listes des adresses', component: AllAdresses },
-  { path: '/adresses/:id',exact: true, name: 'Une adresse', component: Adresse },
+  { path: '/adresses/modification/:id',exact: true, name: 'Modification adresse', component: Adresse },
   { path: '/adresses/creation',exact: true, name: 'Créer une adresse', component: CreateAdresse },
   { path: '/entreprises/liste',exact: true, name: 'Listes des entreprises', component: AllEntreprise },
   { path: '/entreprises/modification/:id',exact: true, name: 'Modifier une entreprises', component: UpdateEntreprise },

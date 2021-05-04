@@ -1,27 +1,48 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import EntreprisesService from "../../services/entreprises.service";
-
+import Pagination from "../Pagination/Pagination";
 class ListEntreprise extends Component {
     constructor(props) {
       super(props);
       this.retrieveEntreprise = this.retrieveEntreprise.bind(this);
+      this.handleClick = this.handleClick.bind(this);
       this.state = {
-        entreprises: []
+        entreprises: [],
+        currentPage: 0,
+        sizePage: 2,
+        nbTotalEntreprise: null,
+        nbTotalPage: null
       };
     }
 
     componentDidMount() {
-        this.retrieveEntreprise();
+        this.retrieveEntreprise(this.state.currentPage);
+        this.getNbTotalEntreprise();
     }
 
-    retrieveEntreprise() {
-        EntreprisesService.getAllEntreprises()
+    getNbTotalEntreprise(){
+      EntreprisesService.countEntreprise().then(resp => {
+        this.setState({
+          nbTotalEntreprise: resp.data.length
+        }); 
+      })
+    }
+    handleClick(pageNum) {
+        this.setState({ currentPage: pageNum });
+        this.retrieveEntreprise(pageNum);
+    }
+
+    /*componentDidUpdate(){
+      this.retrieveEntreprise();
+    }*/
+
+    retrieveEntreprise(pageNum) {
+        EntreprisesService.getAllEntreprisesPage(pageNum,2)
         .then(response => {
           this.setState({
             entreprises: response.data
           });
-          console.log(response.data);
         })
         .catch(e => {
           console.log(e);
@@ -29,7 +50,8 @@ class ListEntreprise extends Component {
     }
   
     render() {
-        const { entreprises } = this.state;
+        const { entreprises,currentPage,nbTotalEntreprise,sizePage } = this.state;
+        const nbPage = Math.ceil(nbTotalEntreprise / sizePage);
         return (
             <>
             <div className="row mt-4">
@@ -58,6 +80,7 @@ class ListEntreprise extends Component {
                       )}
                       </tbody>
                   </table>
+                  <Pagination totalPages={nbPage} currentPage={currentPage}  paginate={this.handleClick} ></Pagination>
                 </div>
             </div>
           </>
