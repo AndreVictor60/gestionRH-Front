@@ -16,6 +16,9 @@ class DomaineService {
   getDomaineByName(recherche) {
     return axios.get(API_URL + `/search?name=${recherche}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
+  countDomaine() {
+    return axios.get(API_URL + `/count`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  }
   save(data) {
     return axios.post(API_URL, data, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }

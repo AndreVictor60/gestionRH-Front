@@ -9,6 +9,9 @@ Projects:
     You can write plain text notes/descriptions wherever you want
     New:
       ☐ Press Cmd/Ctrl+Enter to add a new todo
+      ☐ recherche de salarier pour un poste avec les compétences requises
+      ☐ Ajouter les pages sur les CRUD
+      ☐ Uniformiser les pages CRUD (message erreur, fautes, redirection, ...)
     Done:
       ✔ Press Alt+D to mark a todo as done
       ✔ Press it again to undo the action
