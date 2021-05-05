@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import SalariesService from "../../services/salaries.service";
 
 function compareDateStringWithDateCurrent(string){
@@ -17,7 +18,7 @@ class ListSalarie extends Component {
       //this.onChangeSearchTitle = this.onChangeSearchTitle.bind(this);
       this.retrieveSalaries = this.retrieveSalaries.bind(this);
       //this.refreshList = this.refreshList.bind(this);
-      this.setActiveSalarie = this.setActiveSalarie.bind(this);
+      //this.setActiveSalarie = this.setActiveSalarie.bind(this);
       //this.searchTitle = this.searchTitle.bind(this);
 
       this.state = {
@@ -57,14 +58,7 @@ class ListSalarie extends Component {
         currentIndex: -1
       });
     }*/
-  
-    setActiveSalarie(salarie, index) {
-      this.setState({
-        currentSalarie: salarie,
-        currentIndex: index
-      });
-    }
-  
+
     /*searchTitle() {
         SalariesService.findByTitle(this.state.searchTitle)
         .then(response => {
@@ -92,6 +86,7 @@ class ListSalarie extends Component {
                         <th>Poste</th>
                         <th>Manager</th>
                         <th>Entreprise</th>
+                        <th>Modifier</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -116,6 +111,7 @@ class ListSalarie extends Component {
                             </>
                           )}
                             <td>{salarie.entreprise.nom}</td>
+                            <td><Link to={"/salaries/modification/" + salarie.id}>Modifier</Link></td>
                         </tr>
                       )}
                       </tbody>

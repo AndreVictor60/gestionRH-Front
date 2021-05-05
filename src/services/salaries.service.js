@@ -16,8 +16,16 @@ class SalariesService {
     return axios.get(API_URL +"/3", { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
 
+  getSalarieById(id){
+    return axios.get(API_URL + `/${id}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  }
+
   save(data){
     return axios.post(API_URL, data, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*",'Content-Type': 'application/json'} });
+  }
+
+  update(data){
+    return axios.put(API_URL, data, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*",'Content-Type': 'application/json' } });
   }
 }
 

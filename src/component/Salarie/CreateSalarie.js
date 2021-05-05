@@ -16,21 +16,9 @@ class CreateSalarie extends Component {
         this.getAllCompanies = this.getAllCompanies.bind(this);
         this.getAllSkills = this.getAllSkills.bind(this);
         this.getAllRoles = this.getAllRoles.bind(this);
-        this.onChangeLastname = this.onChangeLastname.bind(this);
-        this.onChangeFirstname = this.onChangeFirstname.bind(this);
-        this.onChangeEmail = this.onChangeEmail.bind(this);
-        this.onChangeBirthday = this.onChangeBirthday.bind(this);
-        this.onChangePassword = this.onChangePassword.bind(this);
-        this.onChangePasswordC = this.onChangePasswordC.bind(this);
-        this.onChangePhonePerso = this.onChangePhonePerso.bind(this);
-        this.onChangePhoneMPerso = this.onChangePhoneMPerso.bind(this);
-        this.onChangePhonePro = this.onChangePhonePro.bind(this);
-        this.onChangePhoneMPro = this.onChangePhoneMPro.bind(this);     
-        this.onChangeAdress = this.onChangeAdress.bind(this);
-        this.onChangeDomain = this.onChangeDomain.bind(this);
-        this.onChangeCompany = this.onChangeCompany.bind(this);
         this.onChangeSkills = this.onChangeSkills.bind(this);
         this.onChangeRoles = this.onChangeRoles.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.saveEmployee = this.saveEmployee.bind(this);
         this.state = {
             errors: {},
@@ -41,6 +29,8 @@ class CreateSalarie extends Component {
             roles: [],
             password: null,
             multiValue: [],
+            nomError: false,
+            prenomError: false,
             currentSalarie: {
               nom: null,
               prenom: null,
@@ -75,172 +65,165 @@ class CreateSalarie extends Component {
         this.getAllRoles();
     }
 
-    onChangeLastname(e) {
-      const lastname = e.target.value;
-      if (0 !== lastname.length) {
-        this.setState((prevState) => ({
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            nom: lastname,
-          }
-        }));
-      }
-    }
-
-    onChangeFirstname(e) {
-      const firstname = e.target.value;
-      if (0 !== firstname.length) {
-        this.setState((prevState) => ({
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            prenom: firstname,
-          }
-        }));
-      }
-    }
-
-    onChangeEmail(e) {
-      const email = e.target.value;
+    handleChange(e){
       let errors = {};
       var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
-      if(!pattern.test(email)){
-        errors["email"] = "Please enter valid email address.";
-      }
-      if (0 !== email.length) {
-        this.setState((prevState) => ({
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            email: email,
-          }
-        }));
-      }
-      //this.setState((prevState) => ({errors: [...prevState.errors,"errors"]}));
-    }
-
-    onChangeBirthday(e) {
-      const birthday = e.target.value;
-      if (0 !== birthday.length) {
-        this.setState((prevState) => ({
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            dateNaissance: birthday,
-          }
-        }));
-      }
-    }
-
-    onChangePassword(e) {
-      const password = e.target.value;
-      if (0 !== password.length) {
-        this.setState((prevState) => ({password: password}));
-      }
-    }
-
-    onChangePasswordC(e) {
-      const passwordC = e.target.value;
-      let errors = {};
-      if(this.state.password !== passwordC){
-        errors["passwordMatch"] = "Les mots de passe ne correspondent pas";
-      }
-      if (0 !== passwordC.length) {
-        this.setState((prevState) => ({
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            motDePasse: passwordC,
-          }
-        }));
-      }
-      this.setState((prevState) => ({errors: [...prevState.errors,"errors"]}));
-    }
-
-    onChangePhonePerso(e) {
-      const phonePerso = e.target.value;
-      if (0 !== phonePerso.length) {
-        this.setState((prevState) => ({
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            telPersonnel: phonePerso,
-          }
-        }));
-      }
-    }
-
-    onChangePhoneMPerso(e) {
-      const phoneMPerso = e.target.value;
-      if (0 !== phoneMPerso.length) {
-        this.setState((prevState) => ({
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            mobilPersonnel: phoneMPerso,
-          }
-        }));
-      }
-    }
-
-    onChangePhonePro(e) {
-      const phonePro = e.target.value;
-      if (0 !== phonePro.length) {
-        this.setState((prevState) => ({
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            telProfessionnel: phonePro,
-          }
-        }));
-      }
-    }
-
-    onChangePhoneMPro(e) {
-      const phoneMPro = e.target.value;
-      if (0 !== phoneMPro.length) {
-        this.setState((prevState) => ({
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            mobileProfessionnel: phoneMPro,
-          }
-        }));
-      }
-    }
-
-    onChangeAdress(e) {
-      const idAdress = e.target.value;
-      if (0 !== idAdress) {
-        this.setState((prevState) => ({
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            adresse: {
-              id: idAdress
+      const target = e.target;
+      const value = target.type === 'checkbox' ? target.checked : target.value;
+      const name = target.name;
+      if(name === "lastname"){
+        if(value === "" || value === null || value.length === 0){
+          this.setState({nomError: true})
+          errors["lastname"] = "Le champ nom est requis.";
+        }else {
+          this.setState((prevState) => ({
+            nomError:false,
+            currentSalarie: {
+              ...prevState.currentSalarie,
+              nom: value,
             }
-          }
-        }));
+          }));
+        }
       }
-    }
 
-    onChangeDomain(e) {
-      const idDomain = e.target.value;
-      if (0 !== idDomain) {
-        this.setState((prevState) => ({
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            domaine: {
-              id: idDomain
+      if(name === "firstname"){
+        if(value === "" || value === null || value.length === 0){
+          this.setState({prenomError: true})
+        }else{
+          this.setState((prevState) => ({
+            prenomError: false,
+            currentSalarie: {
+              ...prevState.currentSalarie,
+              prenom: value,
             }
-          }
-        }));
+          }));
+        }
       }
-    }
 
-    onChangeCompany(e) {
-      const idCompany = e.target.value;
-      if (0 !== idCompany) {
-        this.setState((prevState) => ({
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            entreprise:{
-              id: idCompany
-            } 
-          }
-        }));
+      if(name === "birthday"){
+        if (value !== "" || value !== null || value.length !== 0) {
+          this.setState((prevState) => ({
+            currentSalarie: {
+              ...prevState.currentSalarie,
+              dateNaissance: value,
+            }
+          }));
+        }
       }
+
+      if(name === "phonePerso"){
+        if (value !== "" || value !== null || value.length !== 0) {
+          this.setState((prevState) => ({
+            currentSalarie: {
+              ...prevState.currentSalarie,
+              telPersonnel: value,
+            }
+          }));
+        }
+      }
+
+      if(name === "phoneMPerso"){
+        if (value !== "" || value !== null || value.length !== 0) {
+          this.setState((prevState) => ({
+            currentSalarie: {
+              ...prevState.currentSalarie,
+              mobilPersonnel: value,
+            }
+          }));
+        }
+      }
+      if(name === "phonePro"){
+        if (value !== "" || value !== null || value.length !== 0) {
+          this.setState((prevState) => ({
+            currentSalarie: {
+              ...prevState.currentSalarie,
+              telProfessionnel: value,
+            }
+          }));
+        }
+      }
+
+      if(name === "phoneMPro"){
+        if (value !== "" || value !== null || value.length !== 0) {
+          this.setState((prevState) => ({
+            currentSalarie: {
+              ...prevState.currentSalarie,
+              mobileProfessionnel: value,
+            }
+          }));
+        }
+      }
+
+      if(name === "password"){
+        if (value !== "" || value !== null || value.length !== 0) {
+          this.setState((prevState) => ({password: value}));
+        }
+      }
+
+      if(name === "passwordC"){
+        if(this.state.password !== value){
+          errors["passwordMatch"] = "Les mots de passe ne correspondent pas";
+        }
+        if (value !== "" || value !== null || value.length !== 0) {
+          this.setState((prevState) => ({
+            currentSalarie: {
+              ...prevState.currentSalarie,
+              motDePasse: value,
+            }
+          }));
+        }
+      }
+
+      if(name === "email"){
+        if(!pattern.test(value)){
+          errors["email"] = "Please enter valid email address.";
+        }
+        if (value !== "" || value !== null || value.length !== 0) {
+          this.setState((prevState) => ({
+            currentSalarie: {
+              ...prevState.currentSalarie,
+              email: value,
+            }
+          }));
+        }
+      }
+      if(name === "adresse"){
+        if (0 !== value || value !== "" || value !== null || value.length !== 0) {
+          this.setState((prevState) => ({
+            currentSalarie: {
+              ...prevState.currentSalarie,
+              adresse: {
+                id: value
+              }
+            }
+          }));
+        }
+      }
+      if(name === "domain"){
+        if (0 !== value || value !== "" || value !== null || value.length !== 0) {
+          this.setState((prevState) => ({
+            currentSalarie: {
+              ...prevState.currentSalarie,
+              domaine: {
+                id: value
+              }
+            }
+          }));
+        }
+      }
+      if(name === "company"){
+        if (0 !== value || value !== "" || value !== null || value.length !== 0) {
+          this.setState((prevState) => ({
+            currentSalarie: {
+              ...prevState.currentSalarie,
+              entreprise:{
+                id: value
+              } 
+            }
+          }));
+        }
+      }
+      this.setState({errors: errors});
     }
 
     onChangeSkills(e) {
@@ -251,7 +234,7 @@ class CreateSalarie extends Component {
           competences: e
         }
       }))
-      
+
     }
 
     onChangeRoles(e) {
@@ -262,7 +245,6 @@ class CreateSalarie extends Component {
         }
       }));
     }
-    
 
     getAllAdresses() {
         AdressesService.getAllAdresse().then((response) => {
@@ -301,29 +283,31 @@ class CreateSalarie extends Component {
 
     saveEmployee() {
       const json = JSON.stringify(this.state.currentSalarie).split('"value":').join('"id":');
-      SalariesService.save(json).then((resp) => {
+      const data = JSON.parse(json);
+      SalariesService.save(data).then((resp) => {
         console.log(resp);
       }).catch((e) => { console.log(e)})
     }
 
     render() {
         const {adresses,domains,companies,skills,roles} = this.state;
-        console.log(this.state.errors);
+        console.log(this.state.currentSalarie);
         return (
             <div className="submit-form">
             <div>
-            <form>
+            <form name="createEmployee">
               <div className="row">
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="lastname">Nom *</label>
-                    <input type="text" className="form-control" id="lastname" onChange={this.onChangeLastname} required />
+                    <input type="text" name="lastname" className="form-control" id="lastname" onChange={this.handleChange} required />
+                    <span style={{color: "red"}}>{this.state.errors["lastname"]}</span>
                   </div>
                 </div>
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="firstname">Prénom *</label>
-                    <input type="text" className="form-control" id="firstname" onChange={this.onChangeFirstname} required />
+                    <input type="text" name="firstname" className="form-control" id="firstname" onChange={this.handleChange} required />
                   </div>
                 </div>
               </div>
@@ -331,14 +315,14 @@ class CreateSalarie extends Component {
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="email">Email *</label>
-                    <input type="email" className="form-control" id="email" onChange={this.onChangeEmail} required />
+                    <input type="email" name="email" className="form-control" id="email" onChange={this.handleChange} required />
                     <span style={{color: "red"}}>{this.state.errors["email"]}</span>
                   </div>
                 </div>
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="dayOfBirth">Date de naissance *</label>
-                    <input type="date" className="form-control" id="dayOfBirth" onChange={this.onChangeBirthday} required />
+                    <input type="date" name="birthday" className="form-control" id="dayOfBirth" onChange={this.handleChange} required />
                   </div>
                 </div>
               </div>
@@ -346,13 +330,13 @@ class CreateSalarie extends Component {
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="password">Mot de passe *</label>
-                    <input type="password" className="form-control" id="password" onChange={this.onChangePassword} required  />
+                    <input type="password" name="password" className="form-control" id="password" onChange={this.handleChange} required  />
                   </div>
                 </div>
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="passwordC">Confirmation du mot de passe *</label>
-                    <input type="password" className="form-control" id="passwordC" onChange={this.onChangePasswordC} required  />
+                    <input type="password" name="passwordC" className="form-control" id="passwordC" onChange={this.handleChange} required  />
                     <span style={{color: "red"}}>{this.state.errors["passwordMatch"]}</span>
                   </div>
                 </div>
@@ -361,13 +345,13 @@ class CreateSalarie extends Component {
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="phonePerso">Tél. perso</label>
-                    <input type="text" className="form-control" id="phonePerso" onChange={this.onChangePhonePerso} />
+                    <input type="text" name="phonePerso" className="form-control" id="phonePerso" onChange={this.handleChange} />
                   </div>
                 </div>
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="phoneMPerso">Tél. Mobile perso</label>
-                    <input type="text" className="form-control" id="phoneMPerso" onChange={this.onChangePhoneMPerso}/>
+                    <input type="text" name="phoneMPerso" className="form-control" id="phoneMPerso" onChange={this.handleChange}/>
                   </div>
                 </div>
               </div>
@@ -375,13 +359,13 @@ class CreateSalarie extends Component {
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="phonePro">Tél. pro</label>
-                    <input type="text" className="form-control" id="phonePro" onChange={this.onChangePhonePro} />
+                    <input type="text" name="phonePro" className="form-control" id="phonePro" onChange={this.handleChange} />
                   </div>
                 </div>
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="phoneMPro">Tél. Mobile pro</label>
-                    <input type="text" className="form-control" id="phoneMPro" onChange={this.onChangePhoneMPro}/>
+                    <input type="text" name="phoneMPro" className="form-control" id="phoneMPro" onChange={this.handleChange}/>
                   </div>
                 </div>
               </div>
@@ -389,7 +373,7 @@ class CreateSalarie extends Component {
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="adresse">Adresse *</label>
-                    <CSelect custom name="adresse" id="adresse" onChange={this.onChangeAdress} required>
+                    <CSelect custom name="adresse" id="adresse" onChange={this.handleChange} required>
                       <option value="0">Veuillez sélectionner une adresse</option>
                       {adresses.map((adresse, key) => (
                         <option key={key} value={adresse.id}>
@@ -408,7 +392,7 @@ class CreateSalarie extends Component {
                 <div className="col">
                 <div className="form-group">
                     <label htmlFor="domain">Domaine</label>
-                    <CSelect custom name="domain" id="domain" onChange={this.onChangeDomain}>
+                    <CSelect custom name="domain" id="domain" onChange={this.handleChange}>
                       <option value="0">Veuillez sélectionner un domaine</option>
                       {domains.map((domain, key) => (
                         <option key={key} value={domain.id}>
@@ -423,7 +407,7 @@ class CreateSalarie extends Component {
                 <div className="col">
                 <div className="form-group">
                     <label htmlFor="company">Entreprise</label>
-                    <CSelect custom name="company" id="company" onChange={this.onChangeCompany}>
+                    <CSelect custom name="company" id="company" onChange={this.handleChange}>
                       <option value="0">Veuillez sélectionner une entreprise</option>
                       {companies.map((company, key) => (
                         <option key={key} value={company.id}>
@@ -452,9 +436,9 @@ class CreateSalarie extends Component {
               <div className="row">
                 <div className="col">
                 <div className="form-group">
-                    <label htmlFor="role">Rôle *</label>
+                    <label htmlFor="roles">Rôle *</label>
                     <Select 
-                      name="role"
+                      name="roles"
                       placeholder="Liste des rôles"
                       value={this.state.currentSalarie.roles}
                       options={roles.map(e => ({ label: e.titre, value: e.id}))}
