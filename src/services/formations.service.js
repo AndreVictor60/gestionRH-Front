@@ -40,12 +40,12 @@ class FormationService {
         return axios.get(API_URL + `/count`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
     }
 
-    save(id) {
-        return axios.post(API_URL, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+    save(data) {
+        return axios.post(API_URL,data, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
     }
 
-    update(){
-        return axios.put(API_URL, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+    update(data){
+        return axios.put(API_URL,data, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
     }
 
     delete(id){

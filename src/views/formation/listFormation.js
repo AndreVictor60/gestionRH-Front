@@ -22,7 +22,7 @@ export class listFormation extends Component {
                 <CRow className="align-items-right mt-3">
                   <CCol xl md={{ span: 2, offset: 10 }}>
                     <CButton
-                      to={"/formation/creation"}
+                      to={"/formations/creation"}
                       className="float-right"
                       block
                       variant="outline"

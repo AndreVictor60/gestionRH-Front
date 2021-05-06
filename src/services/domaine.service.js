@@ -4,9 +4,17 @@ import authHeader from './auth-header';
 const API_URL = 'http://localhost:8080/api/domaines';
 
 class DomaineService {
+  /**
+   * @returns Retourne tout les domaines disponnibles
+   */
   getAllDomaine() {
     return axios.get(API_URL , { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
+  /**
+   * @param {*} page Nombre de la page
+   * @param {*} size Taille de la page
+   * @returns Retourne la liste des domaines par page et taille
+   */
   getAllDomaineByPage(page,size) {
     return axios.get(API_URL + `/${page}/${size}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }

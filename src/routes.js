@@ -32,6 +32,7 @@ const AllTitrePoste = React.lazy(() => import('./views/titre-poste/allTitrePoste
 const CreateTitrePoste = React.lazy(() => import('./views/titre-poste/creation-titre-poste'));
 const ListFormation = React.lazy(() => import('./views/formation/listFormation'));
 const Formation = React.lazy(() => import('./views/formation/formation'));
+const CreateFormation = React.lazy(() => import('./views/formation/createFormation'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home', component: Dashboard },
@@ -70,7 +71,8 @@ const routes = [
   { path: '/titre-poste/liste',exact: true, name: 'Liste des intitulés de poste', component: AllTitrePoste },
   { path: '/titre-poste/creation',exact: true, name: 'Creation d\'un intitulé de poste', component: CreateTitrePoste },
   { path: '/formations', exact: true, name: 'Listes des formations', component: ListFormation },
-  { path: '/formation/:id', exact: true, name: 'Formation', component: Formation },
+  { path: '/formations/voir/:id', exact: true, name: 'Formation', component: Formation },
+  { path: '/formations/creation',exact: true, name: 'Creation d\'une formation', component: CreateFormation },
 ];
 
 export default routes;

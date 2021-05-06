@@ -7,7 +7,11 @@ class EntreprisesService {
     getAllEntreprises() {
         return axios.get(API_URL , { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
     }
-
+    /**
+    * @param {*} page Nombre de la page
+    * @param {*} size Taille de la page
+    * @returns Retourne la liste des entreprises par page et taille
+     */
     getAllEntreprisesPage(page,size) {
         return axios.get(API_URL + `/${page}/${size}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
     }

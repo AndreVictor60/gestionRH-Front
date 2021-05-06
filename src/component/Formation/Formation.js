@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import FormationService from '../../services/formations.service';
-
+import moment from 'moment';
 class Formation extends Component {
     constructor(props) {
         super(props);
@@ -41,13 +41,12 @@ class Formation extends Component {
     
     render() {
         const {formation} = this.state;
-        console.log("formation",formation)
         const competences = formation.competences
         return (
             <div>
                 <p>{formation.titre}<br />
-                    Date du début : {formation.dateDebut} <br />
-                     Date de fin : {formation.dateFin}<br />
+                    Date du début : {moment(formation.dateDebut).format('DD/MM/YYYY')} <br />
+                     Date de fin : {moment(formation.dateFin).format('DD/MM/YYYY')}<br />
                      Prix: {formation.prix} €<br />
                      Durée : {formation.duree}<br />
                      Domaine : {formation.domaine.titre}</p>

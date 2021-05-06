@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
 import FormationService from '../../services/formations.service';
 import Pagination from '../Pagination/Pagination';
-
+import moment from 'moment';
 class ListFormation extends Component {
     constructor(props) {
         super(props);
@@ -62,11 +62,11 @@ class ListFormation extends Component {
                     {formations.map( formation => 
                         <tr key={formation.id}>
                             <td>{formation.titre}</td>
-                            <td>{formation.dateDebut}</td>
-                            <td>{formation.dateFin}</td>
+                            <td>{moment(formation.dateDebut).format('DD/MM/YYYY')}</td>
+                            <td>{moment(formation.dateFin).format('DD/MM/YYYY')}</td>
                             <td>{formation.duree}</td>
                             <td>{formation.prix}</td>
-                            <td><Link to={"/formation/" + formation.id}>Voir</Link></td>
+                            <td><Link to={"/formations/voir/" + formation.id}>Voir</Link></td>
                         </tr>
                       )}
                       </tbody>
