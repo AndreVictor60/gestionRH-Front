@@ -2,22 +2,42 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import swal from 'sweetalert';
 import CompetenceService from "../../services/competence.service";
+import Pagination from "../Pagination/Pagination";
 
 class ListCompetence extends Component {
     constructor(props) {
         super(props);
         this.retrieveCompetence = this.retrieveCompetence.bind(this);
+        this.handleClick = this.handleClick.bind(this);
         this.state = {
-          competences: []
+          competences: [],
+          currentPage: 0,
+          sizePage: 2,
+          nbTotalCompetence: null,
+          nbTotalPage: null
         };
     }
 
     componentDidMount() {
-        this.retrieveCompetence();
+        this.retrieveCompetence(this.state.currentPage);
+        this.getNbTotalCompetence();
     }
 
-    retrieveCompetence() {
-        CompetenceService.getAllCompetence()
+    getNbTotalCompetence(){
+      CompetenceService.countCompetence().then(resp => {
+        this.setState({
+          nbTotalCompetence: resp.data
+        }); 
+      })
+    }
+
+    handleClick(pageNum) {
+      this.setState({ currentPage: pageNum });
+      this.retrieveCompetence(pageNum);
+    }
+
+    retrieveCompetence(pageNum) {
+        CompetenceService.getAllComptenceByPage(pageNum,2)
         .then(response => {
           this.setState({
             competences: response.data
@@ -52,7 +72,7 @@ class ListCompetence extends Component {
         .then(response => {
           console.log(response.data);
           this.setState({
-            retrieveRole: response.data,//suppression OK
+            retrieveCompetence: response.data,//suppression OK
             competences: this.state.competences.filter(c => c.id !== id)
           });
         })
@@ -65,7 +85,8 @@ class ListCompetence extends Component {
     }
 
     render() {
-      const { competences } = this.state;
+      const { competences, currentPage, nbTotalCompetence, sizePage } = this.state;
+      const nbPage = Math.ceil(nbTotalCompetence / sizePage);
       return (
           <>
           <div className="row mt-4">
@@ -86,6 +107,7 @@ class ListCompetence extends Component {
                     )}
                     </tbody>
                 </table>
+                <Pagination totalPages={nbPage} currentPage={currentPage}  paginate={this.handleClick} ></Pagination>
               </div>
           </div>
         </>

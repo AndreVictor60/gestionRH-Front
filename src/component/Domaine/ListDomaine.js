@@ -2,22 +2,44 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import swal from 'sweetalert';
 import DomaineService from "../../services/domaine.service";
+import Pagination from "../Pagination/Pagination";
 
 class ListDomaine extends Component {
     constructor(props) {
         super(props);
         this.retrieveDomaine = this.retrieveDomaine.bind(this);
+        this.handleClick = this.handleClick.bind(this);
         this.state = {
-          domaines: []
+          domaines: [],
+          currentPage: 0,
+          sizePage: 2,
+          nbTotalDomaine: null,
+          nbTotalPage: null,
+          nbPage: null
         };
     }
 
     componentDidMount() {
-        this.retrieveDomaine();
+        this.retrieveDomaine(this.state.currentPage);
+        this.getNbTotalDomaine();
     }
 
-    retrieveDomaine() {
-        DomaineService.getAllDomaine()
+    getNbTotalDomaine(){
+      DomaineService.countDomaine().then(resp => {
+        this.setState({
+          nbTotalDomaine: resp.data
+        }); 
+        console.log("resp : ",resp);        
+      })
+    }
+
+    handleClick(pageNum) {
+      this.setState({ currentPage: pageNum });
+      this.retrieveDomaine(pageNum);
+    }
+
+    retrieveDomaine(pageNum) {
+        DomaineService.getAllDomaineByPage(pageNum,2)
         .then(response => {
           this.setState({
             domaines: response.data
@@ -67,7 +89,10 @@ class ListDomaine extends Component {
     }
 
     render() {
-      const { domaines } = this.state;
+      const { domaines, currentPage, nbTotalDomaine, sizePage } = this.state;
+      const nbPage = Math.ceil(nbTotalDomaine / sizePage);
+      console.log("nbPage : ",nbPage);
+      console.log("nbTotalDomaine : ",nbTotalDomaine);
       return (
           <>
           <div className="row mt-4">
@@ -88,7 +113,7 @@ class ListDomaine extends Component {
                     )}
                     </tbody>
                 </table>
-                <p>{this.state.message}</p>
+                <Pagination totalPages={nbPage} currentPage={currentPage}  paginate={this.handleClick} ></Pagination>
               </div>
           </div>
         </>

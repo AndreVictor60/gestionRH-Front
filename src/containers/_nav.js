@@ -171,6 +171,24 @@ const _nav =  [
         name: 'Création d\'une formation',
         to: '/formations/creation',
       }
+      ],
+  },
+  {
+    _tag: 'CSidebarNavDropdown',
+    name: 'Poste',
+    route: '/poste',
+    icon: 'cil-puzzle',
+    _children: [
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Liste des postes',
+        to: '/poste/liste',
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Création d\'un poste',
+        to: '/poste/creation',
+      }
     ],
   },
   {

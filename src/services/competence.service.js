@@ -7,6 +7,9 @@ class CompetenceService {
   getAllCompetence() {
     return axios.get(API_URL , { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
+  getAllComptenceByPage(page,size) {
+    return axios.get(API_URL + `/${page}/${size}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  }
   countCompetence() {
     return axios.get(API_URL + `/count`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
