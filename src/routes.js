@@ -30,6 +30,8 @@ const UpdateCompetence = React.lazy(() => import('./views/competence/modificatio
 const AllTitrePoste = React.lazy(() => import('./views/titre-poste/allTitrePoste'));
 const CreateTitrePoste = React.lazy(() => import('./views/titre-poste/creation-titre-poste'));
 const UpdateTitrePoste = React.lazy(() => import('./views/titre-poste/modification-titre-poste'));
+const AllPoste = React.lazy(() => import('./views/poste/listPoste'));
+const CreatePoste = React.lazy(() => import('./views/poste/creation-poste'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home', component: Dashboard },
@@ -67,6 +69,9 @@ const routes = [
   { path: '/titre-poste/liste',exact: true, name: 'Liste des intitulés de poste', component: AllTitrePoste },
   { path: '/titre-poste/creation',exact: true, name: 'Creation d\'un intitulé de poste', component: CreateTitrePoste },
   { path: '/titre-poste/modification/:id',exact: true, name: 'Modification d\'un intitulé de poste', component: UpdateTitrePoste },
+  { path: '/poste', exact: true, name: 'Postes', component: AllPoste },
+  { path: '/poste/liste',exact: true, name: 'Liste des postes', component: AllPoste },
+  { path: '/poste/creation',exact: true, name: 'Création d\'un poste', component: CreatePoste },
 ];
 
 export default routes;

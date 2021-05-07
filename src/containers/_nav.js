@@ -156,6 +156,24 @@ const _nav =  [
     ],
   },
   {
+    _tag: 'CSidebarNavDropdown',
+    name: 'Poste',
+    route: '/poste',
+    icon: 'cil-puzzle',
+    _children: [
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Liste des postes',
+        to: '/poste/liste',
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Création d\'un poste',
+        to: '/poste/creation',
+      }
+    ],
+  },
+  {
     _tag: 'CSidebarNavDivider'
   },
   {
