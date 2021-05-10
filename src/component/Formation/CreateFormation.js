@@ -96,7 +96,10 @@ export class CreateFormation extends Component {
             }
           }));
       } else {
-        this.setState((prevState) => ({
+        if(){
+
+        }else{
+          this.setState((prevState) => ({
             currentErrors: {
                 ...prevState.currentErrors,
                 duration: null,
@@ -106,6 +109,8 @@ export class CreateFormation extends Component {
                 duree: value,
             },
         }));
+        }
+
       }
     }
 

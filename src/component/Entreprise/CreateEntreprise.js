@@ -115,7 +115,7 @@ class CreateEntreprise extends Component {
         errorEmptyAdresse: "Veuillez sélectionner une adresse",
       });
     }
-    if (this.state.error === false && this.state.errorEmptyAdresse !== "" && this.state.errorEmptyNom !== "") {
+    if (this.state.error === false && this.state.errorEmptyAdresse === "" && this.state.errorEmptyNom === "") {
       var data = {
         nom: this.state.currentEntreprise.nom,
         adresse: {
