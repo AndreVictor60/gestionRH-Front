@@ -25,6 +25,7 @@ class CreatePoste extends Component {
         this.onChangeManager = this.onChangeManager.bind(this);
         this.onChangeCompetence = this.onChangeCompetence.bind(this);
         this.onChangeFichierContrat = this.onChangeFichierContrat.bind(this);
+        this.onChangeMaitreApprentissage = this.onChangeMaitreApprentissage.bind(this);
         this.savePoste = this.savePoste.bind(this);
 
         this.state = {
@@ -34,6 +35,7 @@ class CreatePoste extends Component {
             typesContrat: [],
             entreprises: [],
             managers: [],
+            maitresApprentissage: [],
             multiValue: [],
             typeHoraire: 0,
             competences: [],
@@ -72,6 +74,7 @@ class CreatePoste extends Component {
         this.getAllEntreprise();
         this.getAllManager();
         this.getAllCompetence();
+        this.getAllMaitreApprentissage();
     }
 
     
@@ -224,40 +227,51 @@ class CreatePoste extends Component {
 
     onChangeVolumeHoraire(e) {
         const VolumeHoraire = e.target.value;
+        const re = /^[0-9\b]+$/;
         //console.log("VolumeHoraire : ",VolumeHoraire,"typehoraire (0H, 1J) : ",this.state.typeHoraire);
-        if(VolumeHoraire>0){
-          if(this.state.typeHoraire === 0){
-              this.setState((prevState) => ({
-                  currentPoste: {
-                      ...prevState.currentPoste,
-                      volumeHoraire: VolumeHoraire,
-                      volumeJournalier: 0.0,
-                  },
-                  errors: {
-                    ...prevState.errors,
-                    volumeNeg: null,
-                  }
-              }));
+        if(re.test(VolumeHoraire)){
+          if(VolumeHoraire>0){
+            if(this.state.typeHoraire === 0){
+                this.setState((prevState) => ({
+                    currentPoste: {
+                        ...prevState.currentPoste,
+                        volumeHoraire: VolumeHoraire,
+                        volumeJournalier: 0.0,
+                    },
+                    errors: {
+                      ...prevState.errors,
+                      volumeNeg: null,
+                    }
+                }));
+            }
+            else{
+                this.setState((prevState) => ({
+                    currentPoste: {
+                        ...prevState.currentPoste,
+                        volumeHoraire: 0.0,
+                        volumeJournalier: VolumeHoraire,
+                    },
+                    errors: {
+                      ...prevState.errors,
+                      volumeNeg: null,
+                    }
+                }));
+            }
           }
           else{
-              this.setState((prevState) => ({
-                  currentPoste: {
-                      ...prevState.currentPoste,
-                      volumeHoraire: 0.0,
-                      volumeJournalier: VolumeHoraire,
-                  },
-                  errors: {
-                    ...prevState.errors,
-                    volumeNeg: null,
-                  }
-              }));
-          }
+            this.setState((prevState) => ({
+            errors: {
+                ...prevState.errors,
+                volumeNeg: "Le volume horaire ne doit pas être négative.",
+            }
+          }));
         }
-        else{
-          this.setState((prevState) => ({
+      }
+      else{
+        this.setState((prevState) => ({
           errors: {
               ...prevState.errors,
-              volumeNeg: "Le volume horaire ne doit pas être négative.",
+              volumeNeg: "Le volume horaire doit être un chiffre.",
           }
         }));
       }
@@ -325,6 +339,32 @@ class CreatePoste extends Component {
           });
     }
 
+    onChangeMaitreApprentissage(e) {
+      const idMaitresApprentissage = e.target.value;
+      if (0 !== idMaitresApprentissage) {
+        this.setState((prevState) => ({
+          currentPoste: {
+            ...prevState.currentPoste,
+            maitreAppretissage: {
+              id: idMaitresApprentissage
+            }
+          }
+        }));
+      }
+    }
+    getAllMaitreApprentissage() {
+      SalariesService.getAll()
+          .then(response => {
+            this.setState({
+              maitresApprentissage: response.data
+            });
+            console.log(response.data);
+          })
+          .catch(e => {
+            console.log(e);
+          });
+    }
+
     onChangeFichierContrat(e){
       // Update the state
       console.log("fichier : ",e.target.files[0]);
@@ -337,7 +377,6 @@ class CreatePoste extends Component {
           }
         })); 
         this.setState((prevState) => ({fichierContratBrut: e.target.files[0]}));
-        //this.uploadFile(e.target.files[0]);
       }else{
         this.setState((prevState) => ({
           errors: {
@@ -356,6 +395,7 @@ class CreatePoste extends Component {
 
       formData.append('file', fichier);
       formData.append('name', nomfichier);
+      formData.append('idPoste', idPoste);
       
       console.log("formdata PDF : ",formData);
 
@@ -389,8 +429,9 @@ class CreatePoste extends Component {
     }
 
     render() {
-        const {salaries, titresPoste, typesContrat, entreprises, managers, competences} = this.state;
+        const {salaries, titresPoste, typesContrat, entreprises, managers, competences, maitresApprentissage} = this.state;
         console.log(this.state.errors);
+        console.log("MA : ",maitresApprentissage);
         return (
             <div className="submit-form">
             <div>
@@ -474,7 +515,7 @@ class CreatePoste extends Component {
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="dateDebut">Volume horaire *</label>
-                    <input type="number" className="form-control" id="volumeHoraire" onChange={this.onChangeVolumeHoraire} min={0} defaultValue={0} required />
+                    <input type="number" className="form-control" id="volumeHoraire" onChange={this.onChangeVolumeHoraire} min={0} defaultValue={0} pattern="[0-9]*" required />
                     <div onChange={this.onChangeTypeHoraire} className="form-check">
                       <div className="form-check form-check-inline">
                         <input type="radio" value="1" name="typeHoraire" id="typeHoraireJ" className="form-check-input" required /> 
@@ -526,11 +567,22 @@ class CreatePoste extends Component {
               <div className="row">
                 <div className="col">
                   <div className="form-group">
-                    <label htmlFor="contrat">Contrat (PDF)</label>
-                    <input type="file" id="contrat" name="contrat" onChange={this.onChangeFichierContrat} accept="application/pdf"/>
+                    <label htmlFor="manager">Maitre d'apprentissage</label>
+                    <CSelect custom name="manager" id="manager" onChange={this.onChangeMaitreApprentissage} required>
+                      <option value="0">Veuillez sélectionner un maitre d'apprentissage</option>
+                      {maitresApprentissage.map((maitreApprentissage, key) => (
+                        <option key={key} value={maitreApprentissage.id}>
+                          {maitreApprentissage.nom+" "+maitreApprentissage.prenom}
+                        </option>
+                      ))}
+                    </CSelect>
                   </div>
                 </div>
               </div>
+              <div className="form-group">
+                  <label for="contrat">Contrat (PDF)</label>
+                    <input type="file" id="contrat" name="contrat" className="form-control-file" onChange={this.onChangeFichierContrat} accept="application/pdf"/>
+                  </div>
               {this.state.errors.extensionFichier != null ? <CAlert color="danger">{this.state.errors.extensionFichier}</CAlert> : ""}
             </form>
             <CButton type="submit" block  color="info" onClick={this.savePoste}>
