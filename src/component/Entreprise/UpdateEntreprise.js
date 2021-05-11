@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import EntreprisesService from "../../services/entreprises.service";
 import AdressesService from "../../services/adresses.service";
-import { CButton, CSelect } from "@coreui/react";
+import { CAlert, CButton, CSelect } from "@coreui/react";
 import { withRouter } from "react-router-dom";
 
 class UpdateEntreprise extends Component {
@@ -13,9 +13,13 @@ class UpdateEntreprise extends Component {
     this.getEntreprise = this.getEntreprise.bind(this);
     this.getAllAdresses = this.getAllAdresses.bind(this);
     this.updateEntreprise = this.updateEntreprise.bind(this);
-    //this.deleteTutorial = this.deleteTutorial.bind(this);
-
     this.state = {
+      currentErrors: {
+        name: null,
+        nameBool: null,
+        address: null,
+        addressBool: null
+      },
         adresses: [],
         currentEntreprise: {
             id: null,
@@ -25,8 +29,8 @@ class UpdateEntreprise extends Component {
             },
             version: null
         },
-        error: false,
-        message: ""
+        message: "",
+        ifError: null
     };
   }
 
@@ -37,14 +41,17 @@ class UpdateEntreprise extends Component {
 
   onChangeNom(e) {
     const nom = e.target.value;
-    if (0 !== nom.length) {
+    if (nom === "" || nom === null || nom.length === 0) {
       this.setState((prevState) => ({
         currentEntreprise: {
           ...prevState.currentEntreprise,
           nom: nom,
         },
-        error: false,
-        errorEmptyNom: "",
+        currentErrors: {
+          ...prevState.currentErrors,
+          name: "Le champ nom est requis.",
+          nameBool: true
+        }
       }));
     } else {
       this.setState((prevState) => ({
@@ -52,24 +59,47 @@ class UpdateEntreprise extends Component {
           ...prevState.currentEntreprise,
           nom: nom,
         },
-        error: true,
-        errorEmptyNom: "Le nom est vide",
+        currentErrors: {
+          ...prevState.currentErrors,
+          name: null,
+          nameBool: false
+        }
       }));
+      
     }
   }
 
   onChangeAdresse(e) {
     const idAdresse = e.target.value;
-    console.log(idAdresse);
-    this.setState(prevState => ({
+    if (idAdresse !== "0" || !idAdresse) {
+      this.setState((prevState) => ({
         currentEntreprise: {
-        ...prevState.currentEntreprise,
-        adresse: {
-            id: idAdresse
-        } 
-      }
-    }));
-    
+          ...prevState.currentEntreprise,
+          adresse: {
+            id: idAdresse,
+          },
+        },
+        currentErrors: {
+          ...prevState.currentErrors,
+          address: null,
+          addressBool: false
+        }
+      }));
+    } else {
+      this.setState((prevState) => ({
+        currentEntreprise: {
+          ...prevState.currentEntreprise,
+          adresse: {
+            id: idAdresse,
+          },
+        },
+        currentErrors: {
+          ...prevState.currentErrors,
+          address: "Veuillez sélectionner une adresse",
+          addressBool: true
+        }
+      }));
+    }
   }
   
   getEntreprise(id) {
@@ -98,44 +128,41 @@ class UpdateEntreprise extends Component {
 
 
   updateEntreprise() {
-    if (!this.state.currentEntreprise.nom ||0 === this.state.currentEntreprise.nom.length)
-    {
+    if(this.state.currentErrors.nameBool && this.state.currentErrors.addressBool){
       this.setState({
-        error: true,
-        errorEmptyNom: "Le nom est vide",
+        message: "Une erreur est présente dans votre formulaire.",
+        ifError: false
       });
-    }
-    if (this.state.error === false) {
-      EntreprisesService.update(
-        this.state.currentEntreprise
-      )
+    }else{
+      EntreprisesService.update(this.state.currentEntreprise)
         .then(response => {
           this.setState({
               currentEntreprise: response.data,
-              message: "Modification bien prise en compte !"
+              message: "Création bien prise en compte ! Redirection vers la liste de entreprise.",
+              ifError: true
           });
-          this.props.history.push("/entreprises/liste");
+          window.setTimeout(() => {this.props.history.push("/entreprises/liste")}, 3000);
         })
         .catch(e => {
           this.setState({
-              message: e.message
-            });
-          console.log(e);
+            message: e.message,
+            ifError: true
+          });
         });
     }
   }
 
 
   render() {
-    const { currentEntreprise, adresses, errorEmptyNom } = this.state;
+    const { currentEntreprise, adresses, currentErrors,message,ifError } = this.state;
     return (
         <div>
           <div className="edit-form">
-            <form>
+            <form name="updateCompany" onSubmit={this.updateEntreprise}>
               <div className="form-group">
                 <label htmlFor="nom">Nom</label>
                 <input type="text" className="form-control" id="nom" value={currentEntreprise.nom} onChange={this.onChangeNom}/>
-                <span className="text-danger">{errorEmptyNom}</span>
+                <span className="text-danger">{currentErrors.name}</span>
               </div>
               
               <div className="form-group">
@@ -145,12 +172,13 @@ class UpdateEntreprise extends Component {
                             <option key={adresse.id} value={adresse.id}>{adresse.numero + " " + adresse.voie + " " +adresse.ville}</option>
                             ))}
                     </CSelect>
+                    <span className="text-danger">{currentErrors.address}</span>
               </div>
-            </form>
-            <CButton type="submit" block  color="info" onClick={this.updateEntreprise}>
+              <CButton type="submit" block  color="info" >
                 Modifier
-            </CButton>
-            <p>{this.state.message}</p>
+              </CButton>
+            </form>
+            {ifError != null ? ifError ? <CAlert color="danger">{message}</CAlert> : <CAlert color="success">{message}</CAlert> : <CAlert></CAlert>}
           </div>
         </div>
     );

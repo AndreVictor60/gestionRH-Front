@@ -1,4 +1,4 @@
-import { CButton, CSelect } from "@coreui/react";
+import { CAlert, CButton, CSelect } from "@coreui/react";
 import React, { Component } from "react";
 import AdressesService from "../../services/adresses.service";
 import EntreprisesService from "../../services/entreprises.service";
@@ -11,10 +11,14 @@ class CreateEntreprise extends Component {
     this.getAllAdresses = this.getAllAdresses.bind(this);
     this.onChangeAdresse = this.onChangeAdresse.bind(this);
     this.saveEntreprise = this.saveEntreprise.bind(this);
-    //this.deleteTutorial = this.deleteTutorial.bind(this;=);
-
     this.state = {
       adresses: [],
+      currentErrors: {
+        name: null,
+        nameBool: null,
+        address: null,
+        addressBool: null
+      },
       currentEntreprise: {
         id: null,
         nom: "",
@@ -24,10 +28,7 @@ class CreateEntreprise extends Component {
         version: null,
       },
       message: "",
-      submitted: false,
-      error: true,
-      errorEmptyNom: "",
-      errorEmptyAdresse: "",
+      ifError: null
     };
   }
 
@@ -37,14 +38,17 @@ class CreateEntreprise extends Component {
 
   onChangeNom(e) {
     const nom = e.target.value;
-    if (0 !== this.state.currentEntreprise.nom.length) {
+    if (nom === "" || nom === null || nom.length === 0) {
       this.setState((prevState) => ({
         currentEntreprise: {
           ...prevState.currentEntreprise,
           nom: nom,
         },
-        error: false,
-        errorEmptyNom: "",
+        currentErrors: {
+          ...prevState.currentErrors,
+          name: "Le champ nom est requis.",
+          nameBool: true
+        }
       }));
     } else {
       this.setState((prevState) => ({
@@ -52,15 +56,17 @@ class CreateEntreprise extends Component {
           ...prevState.currentEntreprise,
           nom: nom,
         },
-        error: true,
-        errorEmptyNom: "Le nom est vide",
+        currentErrors: {
+          ...prevState.currentErrors,
+          name: null,
+          nameBool: false
+        }
       }));
     }
   }
 
   onChangeAdresse(e) {
     const idAdresse = e.target.value;
-    console.log(idAdresse);
     if (idAdresse !== "0" || !idAdresse) {
       this.setState((prevState) => ({
         currentEntreprise: {
@@ -69,8 +75,11 @@ class CreateEntreprise extends Component {
             id: idAdresse,
           },
         },
-        error: false,
-        errorEmptyAdresse: "",
+        currentErrors: {
+          ...prevState.currentErrors,
+          address: null,
+          addressBool: false
+        }
       }));
     } else {
       this.setState((prevState) => ({
@@ -80,8 +89,11 @@ class CreateEntreprise extends Component {
             id: idAdresse,
           },
         },
-        error: true,
-        errorEmptyAdresse: "Veuillez sélectionner une adresse",
+        currentErrors: {
+          ...prevState.currentErrors,
+          address: "Veuillez sélectionner une adresse",
+          addressBool: true
+        }
       }));
     }
   }
@@ -99,100 +111,58 @@ class CreateEntreprise extends Component {
   }
 
   saveEntreprise() {
-    if (!this.state.currentEntreprise.nom || 0 === this.state.currentEntreprise.nom.length) {
+    if(this.state.currentErrors.nameBool && this.state.currentErrors.addressBool){
       this.setState({
-        error: true,
-        errorEmptyNom: "Le nom est vide",
+        message: "Une erreur est présente dans votre formulaire.",
+        ifError: false
       });
-    }
-    if (
-      this.state.currentEntreprise.adresse.id === undefined ||
-      this.state.currentEntreprise.adresse.id === null ||
-      this.state.currentEntreprise.adresse.id === "0"
-    ) {
-      this.setState({
-        error: true,
-        errorEmptyAdresse: "Veuillez sélectionner une adresse",
-      });
-    }
-    if (this.state.error === false && this.state.errorEmptyAdresse === "" && this.state.errorEmptyNom === "") {
-      var data = {
-        nom: this.state.currentEntreprise.nom,
-        adresse: {
-          id: this.state.currentEntreprise.adresse.id,
-        },
-      };
-      EntreprisesService.save(data)
+    }else{
+      EntreprisesService.save(this.state.currentEntreprise)
         .then((response) => {
           this.setState({
             id: response.data.id,
-            submitted: true,
+            message: "Création bien prise en compte ! Redirection vers la liste de entreprise.",
+            ifError: true
           });
-          this.props.history.push("/entreprises/liste");
+          window.setTimeout(() => {this.props.history.push("/entreprises/liste")}, 3000);
         })
         .catch((e) => {
-          console.log(e);
+          this.setState({
+            message: e.message,
+            ifError: true
+            });
         });
     }
   }
 
   render() {
-    const {
-      currentEntreprise,
-      adresses,
-      errorEmptyNom,
-      errorEmptyAdresse,
-    } = this.state;
-
+    const {currentEntreprise,adresses,currentErrors,message,ifError} = this.state;
     return (
       <div className="submit-form">
           <div>
-            <form>
+            <form name="createCompany" onSubmit={this.saveEntreprise}>
               <div className="form-group">
-                <label htmlFor="nom">Nom</label>
-                <input
-                  type="text"
-                  placeholder="Saisir un nom d'entreprise"
-                  className="form-control"
-                  id="nom"
-                  value={currentEntreprise.nom}
-                  onChange={this.onChangeNom}
-                  required
-                />
-                <span className="text-danger">{errorEmptyNom}</span>
+                <label htmlFor="name">Nom</label>
+                <input type="text" name="name" placeholder="Saisir un nom d'entreprise" className="form-control" id="name" value={currentEntreprise.nom} onChange={this.onChangeNom} required />
+                <span className="text-danger">{currentErrors.name}</span>
               </div>
-
               <div className="form-group">
                 <label htmlFor="adresse">Adresse</label>
-                <CSelect
-                  custom
-                  name="adresse"
-                  id="adresse"
-                  onChange={this.onChangeAdresse}
-                >
+                <CSelect custom name="adresse" id="adresse" onChange={this.onChangeAdresse}>
                   <option value="0">Veuillez sélectionner une adresse</option>
                   {adresses.map((adresse, key) => (
                     <option key={key} value={adresse.id}>
-                      {adresse.numero +
-                        " " +
-                        adresse.voie +
-                        " " +
-                        adresse.ville}
+                      {adresse.numero + " " + adresse.voie + " " + adresse.ville}
                     </option>
                   ))}
                 </CSelect>
-                <span className="text-danger">{errorEmptyAdresse}</span>
+                <span className="text-danger">{currentErrors.address}</span>
               </div>
-            </form>
-            <CButton
-              type="submit"
-              block
-              color="info"
-              onClick={this.saveEntreprise}
-            >
+              <CButton type="submit" block color="info">
               Créer une entreprise
             </CButton>
-            <p>{this.state.message}</p>
+            </form>
+            {ifError != null ? ifError ? <CAlert color="danger">{message}</CAlert> : <CAlert color="success">{message}</CAlert> : <CAlert></CAlert>}
           </div>
       </div>
     );

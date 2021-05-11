@@ -29,3 +29,17 @@ export function ifNumber(number){
     return false;
   }
 }
+
+export function ifNumberWithDecimal(number){
+  const regex = /^\d*\.?\d*$/;
+  if(regex.test(number)){
+    return true;
+  }else{
+    return false;
+  }
+}
+
+export function isValidDate(value) {
+  const dateWrapper = new Date(value);
+  return !isNaN(dateWrapper.getDate());
+}

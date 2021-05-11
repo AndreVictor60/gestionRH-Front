@@ -1,4 +1,4 @@
-import { CButton } from "@coreui/react";
+import { CAlert, CButton } from "@coreui/react";
 import React, { Component } from "react";
 import AdressesService from "../../services/adresses.service";
 import { withRouter } from "react-router-dom";
@@ -6,17 +6,24 @@ import { withRouter } from "react-router-dom";
 class UpdateAdresse extends Component {
   constructor(props) {
     super(props);
-    this.onChangeNumero = this.onChangeNumero.bind(this);
-    this.onChangeVoie = this.onChangeVoie.bind(this);
-    this.onChangeComplementAdresse = this.onChangeComplementAdresse.bind(this);
-    this.onChangeVille = this.onChangeVille.bind(this);
-    this.onChangeCodePostal = this.onChangeCodePostal.bind(this);
-    this.onChangePays = this.onChangePays.bind(this);
     this.getAdresse = this.getAdresse.bind(this);
     this.updateAdresse = this.updateAdresse.bind(this);
-    //this.deleteTutorial = this.deleteTutorial.bind(this);
-
+    this.handleChange = this.handleChange.bind(this);
     this.state = {
+      currentErrors: {
+        number: null,
+        numberBool: null,
+        route: null,
+        routeBool: null,
+        complementAddress: null,
+        complementAddressBool: null,
+        town: null,
+        townBool: null,
+        zipCode: null,
+        zipCodeBool: null,
+        country: null,
+        countryBool: null
+      },
       currentAdresse: {
         id: null,
         numero: "",
@@ -27,7 +34,8 @@ class UpdateAdresse extends Component {
         pays: "",
         version: null
       },
-      message: ""
+      message: null,
+      ifError: null
     };
   }
 
@@ -35,68 +43,155 @@ class UpdateAdresse extends Component {
    this.getAdresse(this.props.adresseid.id);
   }
 
-  onChangeNumero(e) {
-    const numero = e.target.value;
-
-    this.setState(function(prevState) {
-      return {
-        currentAdresse: {
-          ...prevState.currentAdresse,
-          numero: numero
-        }
-      };
-    });
-  }
-
-  onChangeVoie(e) {
-    const voie = e.target.value;
-    
-    this.setState(prevState => ({
-        currentAdresse: {
-        ...prevState.currentAdresse,
-        voie: voie
+  handleChange(e) {
+    const target = e.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.name;
+    if (name === "number") {
+      if (value === "" || value === null || value.length === 0) {
+        this.setState((prevState) => ({
+            currentErrors: {
+              ...prevState.currentErrors,
+              number: "Le numéro de l'adresse est requis.",
+              numberBool: true,
+            },
+            currentAdresse: {
+              ...prevState.currentAdresse,
+              numero: value,
+          },
+          }));
+      } else {
+        this.setState((prevState) => ({
+          currentErrors: {
+              ...prevState.currentErrors,
+              duration: null,
+              durationBool: false,
+          },
+          currentAdresse: {
+              ...prevState.currentAdresse,
+              numero: value,
+          },
+      }));
       }
-    }));
-  }
-  onChangeComplementAdresse(e) {
-    const complementAdresse = e.target.value;
-    
-    this.setState(prevState => ({
-        currentAdresse: {
-        ...prevState.currentAdresse,
-        complementAdresse: complementAdresse
+    }
+    if (name === "route") {
+      if (value === "" || value === null || value.length === 0) {
+        this.setState((prevState) => ({
+            currentErrors: {
+              ...prevState.currentErrors,
+              route: "Le champ voie est requis.",
+              routeBool: true,
+            },
+            currentAdresse: {
+              ...prevState.currentAdresse,
+              voie: value,
+          },
+          }));
+      } else {
+        this.setState((prevState) => ({
+          currentErrors: {
+              ...prevState.currentErrors,
+              route: null,
+              routeBool: false,
+          },
+          currentAdresse: {
+              ...prevState.currentAdresse,
+              voie: value,
+          },
+      }));
       }
-    }));
-  }
-  onChangeVille(e) {
-    const ville = e.target.value;
-    
-    this.setState(prevState => ({
-        currentAdresse: {
-        ...prevState.currentAdresse,
-        ville: ville
+    }
+    if (name === "cpltAddress") {
+      if (value !== "" || value !== null || value.length !== 0) {
+        this.setState((prevState) => ({
+          currentAdresse: {
+              ...prevState.currentAdresse,
+              complementAdresse: value,
+          },
+      }));
       }
-    }));
-  }
-  onChangeCodePostal(e) {
-    const codePostal = e.target.value;
-    
-    this.setState(prevState => ({
-        currentAdresse: {
-        ...prevState.currentAdresse,
-        codePostal: codePostal
+    }
+    if (name === "town") {
+      if (value === "" || value === null || value.length === 0) {
+        this.setState((prevState) => ({
+            currentErrors: {
+              ...prevState.currentErrors,
+              town: "Le champ ville est requis.",
+              townBool: true,
+            },
+            currentAdresse: {
+              ...prevState.currentAdresse,
+              ville: value,
+          },
+          }));
+      } else {
+        this.setState((prevState) => ({
+          currentErrors: {
+              ...prevState.currentErrors,
+              town: null,
+              townBool: false,
+          },
+          currentAdresse: {
+              ...prevState.currentAdresse,
+              ville: value,
+          },
+      }));
       }
-    }));
-  }
-  onChangePays(e){
-    const pays = e.target.value;
-    
-    this.setState(prevState => ({
-        currentAdresse: {
-        ...prevState.currentAdresse,
-        pays: pays
+    }
+    if (name === "zipCode") {
+      if (value === "" || value === null || value.length === 0) {
+        this.setState((prevState) => ({
+            currentErrors: {
+              ...prevState.currentErrors,
+              zipCode: "Le champ pays est requis.",
+              zipCodeBool: true,
+            },
+            currentAdresse: {
+              ...prevState.currentAdresse,
+              codePostal: value,
+          },
+          }));
+      } else {
+        this.setState((prevState) => ({
+          currentErrors: {
+              ...prevState.currentErrors,
+              zipCode: null,
+              zipCodeBool: false,
+          },
+          currentAdresse: {
+              ...prevState.currentAdresse,
+              codePostal: value,
+          },
+      }));
       }
-    }));
+    }
+    if (name === "country") {
+      if (value === "" || value === null || value.length === 0) {
+        this.setState((prevState) => ({
+            currentErrors: {
+              ...prevState.currentErrors,
+              country: "Le champ pays est requis.",
+              countryBool: true,
+            },
+            currentAdresse: {
+              ...prevState.currentAdresse,
+              pays: value,
+          },
+          }));
+      } else {
+        this.setState((prevState) => ({
+          currentErrors: {
+              ...prevState.currentErrors,
+              country: null,
+              countryBool: false,
+          },
+          currentAdresse: {
+              ...prevState.currentAdresse,
+              pays: value,
+          },
+      }));
+      }
+    }
   }
 
   getAdresse(id) {
@@ -112,64 +207,84 @@ class UpdateAdresse extends Component {
       });
   }
 
+  validationForm(){
+    const { currentErrors } = this.state;
+    if(!currentErrors.numberBool && !currentErrors.routeBool && !currentErrors.complementAddressBool && !currentErrors.townBool && !currentErrors.zipCodeBool && !currentErrors.countryBool){
+      return true;
+    }else{
+      return false;
+    }
+  }
 
-  updateAdresse() {
-    AdressesService.update(
-      this.state.currentAdresse
-    )
+  updateAdresse(e) {
+    e.preventDefault();
+    if(this.validationForm()){
+      AdressesService.update(this.state.currentAdresse)
       .then(response => {
-        console.log(response.data);
         this.setState({
-            currentAdresse: response.data,
-            message: "Modification bien prise en compte !"
+          message: "Modification bien prise en compte ! Redirection vers la liste des adresses.",
+          ifError: false
         });
-        this.props.history.push("/adresses/liste");
+        window.setTimeout(() => {this.props.history.push("/adresses/liste")}, 3000);
       })
       .catch(e => {
         this.setState({
-            message: e.message
-          });
+          message: "Une erreur s'est produite ! veuillez ré-essayer ou contacter un administrateur.",
+          ifError: true
+        });
         console.log(e);
       });
+    }else{
+      this.setState({
+        message: "Une erreur est présente dans votre formulaire.",
+        ifError: true
+      });
+    }
   }
 
 
   render() {
-    const { currentAdresse } = this.state;
+    const { currentAdresse,currentErrors,message,ifError } = this.state;
 
     return (
       <div>
           <div className="edit-form">
-            <form>
+            <form name="updateAddress" onSubmit={this.updateAdresse}>
               <div className="form-group">
-                <label htmlFor="numero">Numéro</label>
-                <input type="text" className="form-control" id="numero" value={currentAdresse.numero} onChange={this.onChangeNumero}/>
+                <label htmlFor="number">Numéro</label>
+                <input type="text" name="number" className="form-control" id="number" value={currentAdresse.numero} onChange={this.handleChange} required/>
+                <span className="text-danger">{currentErrors.number}</span>
               </div>
               <div className="form-group">
-                <label htmlFor="voie">Voie</label>
-                <input type="text" className="form-control" id="voie" value={currentAdresse.voie} onChange={this.onChangeVoie}  />
+                <label htmlFor="route">Voie</label>
+                <input type="text" name="route" className="form-control" id="route" value={currentAdresse.voie} onChange={this.handleChange} required />
+                <span className="text-danger">{currentErrors.route}</span>
               </div>
               <div className="form-group">
-                <label htmlFor="cpltAdresse">Complément d'adresse</label>
-                <input type="text" className="form-control" id="cpltAdresse" value={currentAdresse.complementAdresse}  onChange={this.onChangeComplementAdresse} />
+                <label htmlFor="cpltAddress">Complément d'adresse</label>
+                <input type="text" name="cpltAddress" className="form-control" id="cpltAddress" value={currentAdresse.complementAdresse === null ? "" : currentAdresse.complementAdresse }  onChange={this.handleChange} />
+                <span className="text-danger">{currentErrors.cpltAddress}</span>
               </div>
               <div className="form-group">
                 <label htmlFor="town">Ville</label>
-                <input type="text" className="form-control" id="ville" value={currentAdresse.ville} onChange={this.onChangeVille} />
+                <input type="text" name="town" className="form-control" id="town" value={currentAdresse.ville} onChange={this.handleChange} required />
+                <span className="text-danger">{currentErrors.town}</span>
               </div>
               <div className="form-group">
-                <label htmlFor="codePostal">Code Postal</label>
-                <input type="text" className="form-control" id="codePostal" value={currentAdresse.codePostal} onChange={this.onChangeCodePostal} />
+                <label htmlFor="zipCode">Code Postal</label>
+                <input type="text" name="zipCode" className="form-control" id="zipCode" value={currentAdresse.codePostal} onChange={this.handleChange} required/>
+                <span className="text-danger">{currentErrors.zipCode}</span>
               </div>
               <div className="form-group">
-                <label htmlFor="pays">Pays</label>
-                <input type="text" className="form-control" id="pays" value={currentAdresse.pays}  onChange={this.onChangePays}/>
+                <label htmlFor="country">Pays</label>
+                <input type="text" name="country" className="form-control" id="country" value={currentAdresse.pays}  onChange={this.handleChange} required/>
+                <span className="text-danger">{currentErrors.country}</span>
               </div>
-            </form>
-            <CButton type="submit" block  color="info" onClick={this.updateAdresse}>
+              <CButton type="submit" block  color="info">
                 Modifier
-            </CButton>
-            <p>{this.state.message}</p>
+              </CButton>
+            </form>
+            {ifError != null ? ifError ? <CAlert color="danger">{message}</CAlert> : <CAlert color="success">{message}</CAlert> : <CAlert></CAlert>}
           </div>
       </div>
     );

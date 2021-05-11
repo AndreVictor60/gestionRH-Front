@@ -6,20 +6,24 @@ import moment from 'moment';
 class ListFormation extends Component {
     constructor(props) {
         super(props);
+        this.handleClick = this.handleClick.bind(this);
         this.state={
             formations: [],
             currentPage: 0,
-            sizePage: 2,
+            sizePage: 10,
             nbTotalFormations: 0,
             nbTotalPage: 0
         }
     }
 
     componentDidMount(){
-        this.retrieveFormation();
+        this.retrieveFormation(this.state.currentPage);
         this.getNbTotalFormation();
     }
-
+    handleClick(pageNum) {
+      this.setState({ currentPage: pageNum });
+      this.retrieveFormation(pageNum);
+  }
     
     getNbTotalFormation(){
         FormationService.countFormation().then(resp => {
@@ -29,8 +33,8 @@ class ListFormation extends Component {
         })
       }
 
-    retrieveFormation() {
-        FormationService.getAllFormationByPage(0,2)
+    retrieveFormation(pageNum) {
+        FormationService.getAllFormationByPage(pageNum,this.state.sizePage)
         .then(response => {
             this.setState({
                 formations: response.data
@@ -44,6 +48,9 @@ class ListFormation extends Component {
     render() {
         const { formations,currentPage,nbTotalFormations,sizePage } = this.state;
         const nbPage = Math.ceil(nbTotalFormations / sizePage);
+        const nextPage = () => this.setState({ currentPage: currentPage + 1 });
+    
+        const prevPage = () => this.setState({ currentPage: currentPage - 1 });
         return (
             <div className="row mt-4">
               <div className="col-lg-12">
@@ -53,8 +60,8 @@ class ListFormation extends Component {
                         <th>Titre</th>
                         <th>Date de début</th>
                         <th>Date de fin</th>
-                        <th>Durée</th>
-                        <th>Prix</th>
+                        <th>Durée<span><small><i>(en heure)</i></small></span></th>
+                        <th>Prix<span><small><i>(TTC)</i></small></span></th>
                         <th></th>
                       </tr>
                     </thead>
@@ -65,13 +72,13 @@ class ListFormation extends Component {
                             <td>{moment(formation.dateDebut).format('DD/MM/YYYY')}</td>
                             <td>{moment(formation.dateFin).format('DD/MM/YYYY')}</td>
                             <td>{formation.duree}</td>
-                            <td>{formation.prix}</td>
+                            <td>{formation.prix} €</td>
                             <td><Link to={"/formations/voir/" + formation.id}>Voir</Link></td>
                         </tr>
                       )}
                       </tbody>
                   </table>
-                  <Pagination totalPages={nbPage} currentPage={currentPage}  paginate={this.handleClick} ></Pagination>
+                  <Pagination totalPages={nbPage} currentPage={currentPage}  paginate={this.handleClick} nextPage={nextPage} prevPage={prevPage} ></Pagination>
                 </div>
             </div>
         )

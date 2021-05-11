@@ -1,8 +1,9 @@
-import { CButton } from "@coreui/react";
+import { CAlert, CButton } from "@coreui/react";
 import React, { Component } from "react";
+import { withRouter } from "react-router";
 import DomaineService from "../../services/domaine.service";
 
-export default class CreateDomaine extends Component {
+class CreateDomaine extends Component {
   constructor(props) {
     super(props);
     this.onChangeDomaine = this.onChangeDomaine.bind(this);
@@ -10,28 +11,46 @@ export default class CreateDomaine extends Component {
     this.getDomaine = this.getDomaine.bind(this);
 
     this.state = {
+      currentErrors:{
+        title: null,
+        titleBool: false
+      },
       currentDomaine: {
         id: null,
         titre: ""
       },
-      message: ""
+      message: null,
+      ifError: null
     };
   }
 
-  componentDidMount() {
-   
-  }
   onChangeDomaine(e){
     const domaine = e.target.value;
-
-    this.setState(function(prevState) {
-      return {
+    if(domaine === "" || domaine === null || domaine.length === 0 ){
+      this.setState((prevState) => ({
+        currentErrors: {
+          ...prevState.currentErrors,
+          title: "Le champ titre est requis.",
+          titleBool: true
+        },
         currentDomaine: {
           ...prevState.currentDomaine,
           titre: domaine
         }
-      };
-    });
+      }));
+    }else{
+      this.setState((prevState) => ({
+        currentErrors: {
+          ...prevState.currentErrors,
+          title: null,
+          titleBool: false
+        },
+        currentDomaine: {
+          ...prevState.currentDomaine,
+          titre: domaine
+        }
+      }));
+    }
   }
   
   getDomaine(id) {
@@ -47,51 +66,55 @@ export default class CreateDomaine extends Component {
       });
   }
 
-  redirectionApresValidation(){
-    setTimeout(function() {
-      window.location.replace('/domaine/liste');
-    }, 1000);
-  }
-
-  createDomaine() {
-    DomaineService.save(
-      this.state.currentDomaine
-    )
+  createDomaine(e) {
+    e.preventDefault();
+    if(!this.state.currentErrors.titleBool){
+      DomaineService.save(this.state.currentDomaine)
       .then(response => {
         console.log(response.data);
         this.setState({
-          currentDomaine: response.data,
-            message: "Création bien prise en compte ! Redirection vers la liste de domaine."
+            currentDomaine: response.data,
+            message: "Création bien prise en compte ! Redirection vers la liste de domaine.",
+            ifError: false
         });
-        //redirection vers liste domaines
-        this.redirectionApresValidation();
+        window.setTimeout(() => {this.props.history.push("/domaine/liste")}, 3000);
       })
       .catch(e => {
         this.setState({
-            message: e.message
+            message: e.message,
+            ifError: true
           });
-        console.log(e);
       });
+    }else {
+      this.setState({
+          message: "Une erreur est présente dans votre formulaire.",
+          ifError: false
+      });
+    }
+    
   }
 
   render() {
-    const { currentDomaine } = this.state;
+    const { currentDomaine,currentErrors,message,ifError } = this.state;
 
     return (
       <div>
           <div className="edit-form">
-            <form>
+            <form name="createDomain" onSubmit={this.createDomaine}>
               <div className="form-group">
-                <label htmlFor="titre">Créer un nouveau domaine</label>
-                <input type="text" className="form-control" id="titre" value={currentDomaine.titre} onChange={this.onChangeDomaine}/>
+                <label htmlFor="title">Créer un nouveau domaine</label>
+                <input type="text" name="title" className="form-control" id="title" value={currentDomaine.titre} onChange={this.onChangeDomaine}/>
+                <span className="text-danger">{currentErrors.title}</span>
               </div>
-            </form>
-            <CButton type="submit" block  color="info" onClick={this.createDomaine}>
+              <CButton type="submit" block  color="info">
                 Créer
-            </CButton>
-            <p>{this.state.message}</p>
+              </CButton>
+            </form>
+            {ifError != null ? ifError ? <CAlert color="danger">{message}</CAlert> : <CAlert color="success">{message}</CAlert> : <CAlert></CAlert>}
           </div>
       </div>
     );
   }
 }
+
+export default withRouter(CreateDomaine)

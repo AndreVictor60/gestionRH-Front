@@ -1,4 +1,4 @@
-import { CButton } from "@coreui/react";
+import { CAlert, CButton } from "@coreui/react";
 import React, { Component } from "react";
 import DomaineService from "../../services/domaine.service";
 
@@ -10,28 +10,50 @@ export default class UpdateDomaine extends Component {
     this.getDomaine = this.getDomaine.bind(this);
 
     this.state = {
+      currentErrors:{
+        title: null,
+        titleBool: false
+      },
       currentDomaine: {
         id: null,
         titre: ""
       },
-      message: ""
+      message: null,
+      ifError: null
     };
   }
 
   componentDidMount() {
    this.getDomaine(this.props.domaineId.id);
   }
+
   onChangeDomaine(e){
     const domaine = e.target.value;
-
-    this.setState(function(prevState) {
-      return {
+    if(domaine === "" || domaine === null || domaine.length === 0 ){
+      this.setState((prevState) => ({
+        currentErrors: {
+          ...prevState.currentErrors,
+          title: "Le champ titre est requis.",
+          titleBool: true
+        },
         currentDomaine: {
           ...prevState.currentDomaine,
           titre: domaine
         }
-      };
-    });
+      }));
+    }else{
+      this.setState((prevState) => ({
+        currentErrors: {
+          ...prevState.currentErrors,
+          title: null,
+          titleBool: false
+        },
+        currentDomaine: {
+          ...prevState.currentDomaine,
+          titre: domaine
+        }
+      }));
+    }
   }
   
   getDomaine(id) {
@@ -48,42 +70,48 @@ export default class UpdateDomaine extends Component {
   }
 
 
-  updateDomaine() {
-    DomaineService.update(
-      this.state.currentDomaine
-    )
+  updateDomaine(e) {
+    e.preventDefault();
+    if(!this.state.currentErrors.titleBool){
+      DomaineService.update(this.state.currentDomaine)
       .then(response => {
-        console.log(response.data);
         this.setState({
           currentDomaine: response.data,
-            message: "Modification bien prise en compte !"
+            message: "Modification bien prise en compte ! Redirection vers la liste de domaine.",
+            ifError: false
         });
+        window.setTimeout(() => {this.props.history.push("/domaine/liste")}, 3000);
       })
       .catch(e => {
         this.setState({
-            message: e.message
+          message: e.message,
+          ifError: true
           });
-        console.log(e);
       });
+    }else{
+      this.setState({
+        message: "Une erreur est présente dans votre formulaire.",
+        ifError: false
+    });
+    }
   }
 
-
   render() {
-    const { currentDomaine } = this.state;
-
+    const { currentDomaine,currentErrors,message,ifError } = this.state;
     return (
       <div>
           <div className="edit-form">
-            <form>
+            <form name="updateDomain" onSubmit={this.updateDomaine}>
               <div className="form-group">
-                <label htmlFor="titre">Nom du domaine</label>
-                <input type="text" className="form-control" id="titre" value={currentDomaine.titre} onChange={this.onChangeDomaine}/>
+                <label htmlFor="title">Nom du domaine</label>
+                <input type="text" name="title" className="form-control" id="title" value={currentDomaine.titre} onChange={this.onChangeDomaine}/>
+                <span className="text-danger">{currentErrors.title}</span>
               </div>
-            </form>
-            <CButton type="submit" block  color="info" onClick={this.updateDomaine}>
+              <CButton type="submit" block  color="info">
                 Modifier
-            </CButton>
-            <p>{this.state.message}</p>
+              </CButton>
+            </form>
+            {ifError != null ? ifError ? <CAlert color="danger">{message}</CAlert> : <CAlert color="success">{message}</CAlert> : <CAlert></CAlert>}
           </div>
       </div>
     );

@@ -44,13 +44,10 @@ class Authentification extends Component {
   handleLogin(e) {
     e.preventDefault();
     console.log("submit");
-
     this.setState({
       loading: true,
     });
-
     const { dispatch, history } = this.props;
-
       dispatch(login(this.state.email, this.state.password))
         .then(() => {
           history.push("/");

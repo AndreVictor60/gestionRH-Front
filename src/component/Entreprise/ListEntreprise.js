@@ -7,6 +7,8 @@ class ListEntreprise extends Component {
       super(props);
       this.retrieveEntreprise = this.retrieveEntreprise.bind(this);
       this.handleClick = this.handleClick.bind(this);
+      this.nextPage = this.nextPage.bind(this);
+      this.prevPage = this.prevPage.bind(this);
       this.state = {
         entreprises: [],
         currentPage: 0,
@@ -31,6 +33,16 @@ class ListEntreprise extends Component {
     handleClick(pageNum) {
         this.setState({ currentPage: pageNum });
         this.retrieveEntreprise(pageNum);
+    }
+    nextPage(){
+      this.setState({ currentPage: this.state.currentPage + 1 })
+      this.retrieveEntreprise(this.state.currentPage);
+    }
+
+    prevPage(){
+      this.setState({ currentPage: this.state.currentPage - 1 })
+      console.log(this.state.currentPage)
+      this.retrieveEntreprise(this.state.currentPage);
     }
 
     /*componentDidUpdate(){
@@ -80,7 +92,7 @@ class ListEntreprise extends Component {
                       )}
                       </tbody>
                   </table>
-                  <Pagination totalPages={nbPage} currentPage={currentPage}  paginate={this.handleClick} ></Pagination>
+                  <Pagination totalPages={nbPage} currentPage={currentPage}  paginate={this.handleClick} nextPage={this.nextPage} prevPage={this.prevPage} ></Pagination>
                 </div>
             </div>
           </>
