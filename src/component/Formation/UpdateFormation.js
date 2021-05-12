@@ -23,19 +23,19 @@ class UpdateFormation extends Component {
       ifError: null,
       currentErrors: {
         title: null,
-        titleBool: true,
+        titleBool: false,
         duration: null,
-        durationBool: true,
+        durationBool: false,
         price: null,
-        priceBool: true,
+        priceBool: false,
         startDate: null,
-        startDateBool: true,
+        startDateBool: false,
         endDate: null,
-        endDateBool: true,
+        endDateBool: false,
         domain: null,
-        domainBool: true,
+        domainBool: false,
         skill: null,
-        skillBool: true
+        skillBool: false
       },
       validateForm: false,
       domains: [],
@@ -401,6 +401,7 @@ class UpdateFormation extends Component {
 
   updateTraining(e) {
    e.preventDefault();
+   console.log(this.state.currentErrors);
    if(this.validationForm()){
     const json = JSON.stringify(this.state.currentFormation).split('"value":').join('"id":');
     const data = JSON.parse(json);
@@ -410,7 +411,7 @@ class UpdateFormation extends Component {
           message: "Création bien prise en compte ! Redirection vers la liste des formations.",
           ifError: false
       });
-      //window.setTimeout(() => {this.props.history.push('/formations')}, 5000)
+      window.setTimeout(() => {this.props.history.push('/formations')}, 5000)
       })
       .catch((e) => {
         this.setState({
@@ -432,6 +433,7 @@ class UpdateFormation extends Component {
   render() {
     const { domains, skills, currentFormation, currentErrors,message,ifError } = this.state;
     const dateNow = new Date();
+    console.log("render",this.state.currentErrors);
     return (
       <div className="submit-form">
         <div>
@@ -573,7 +575,7 @@ class UpdateFormation extends Component {
               </div>
             </div>
             <CButton type="submit" block color="info">
-              Ajout d'une formation
+              Modifier la formation
             </CButton>
           </form>
           {ifError != null && <CAlert color={ifError ? "danger" : "success"}>{message}</CAlert>}
