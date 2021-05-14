@@ -12,6 +12,10 @@ class SalariesService {
     return axios.get(API_URL, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }*/
 
+  getAllSalariesWithoutPoste() {
+    return axios.get(API_URL + "/sans-poste", { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  }
+
   getUser(){
     return axios.get(API_URL +"/3", { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
