@@ -1,0 +1,33 @@
+const usersData = [
+  {id: 0,nom: 'André', prenom:'Victor', nomprenom: 'ANDRE Victor', dateNaissance:'17 novembre 1995', poste: 'Développeur JAVA',
+   typeContrat:'APPRENTISSAGE',emailPro:'vandre@dawan.fr',motDePasse: "*******",managerId: 17, manager: 'John Doe',telPro : '01',
+   mobilePro: "01",telPerso: '02', mobilePerso: '02',adresse:'14 rue test, NOYON, 60400', entreprise: 'DAWAN', implatation: 'Amiens',
+   role:'SALARIE',domaine: 'INFORMATIQUE'},
+  {id: 99, nomprenom: 'John Doe', poste: 'Développeur JAVA',managerId: 17, manager: 'John Doe', implatation: 'Amiens'},
+  {id: 1, nomprenom: 'Samppa Nori', poste: 'Développeur JAVA', manager: 'John Doe', implatation: 'Paris'},
+  {id: 2, nomprenom: 'Estavan Lykos', poste: 'Développeur C++', manager: 'John Doe', implatation: 'Nantes'},
+  {id: 3, nomprenom: 'Chetan Mohamed', poste: 'Développeur C++', manager: 'John Doe', implatation: 'Paris'},
+  {id: 4, nomprenom: 'Derick Maximinus', poste: 'Développeur C#', manager: 'John Doe', implatation: 'Amiens'},
+  {id: 5, nomprenom: 'Friderik Dávid', poste: 'Développeur PHP', manager: 'John Doe', implatation: 'Paris'},
+  {id: 6, nomprenom: 'Yiorgos Avraamu', poste: 'Développeur JAVA', manager: 'John Doe', implatation: 'Paris'},
+  {id: 7, nomprenom: 'Avram Tarasios', poste: 'Développeur C++', manager: 'John Doe', implatation: 'Nantes'},
+  {id: 8, nomprenom: 'Quintin Ed', poste: 'Développeur C++', manager: 'John Doe', implatation: 'Paris'},
+  {id: 9, nomprenom: 'Enéas Kwadwo', poste: 'Développeur C#', manager: 'John Doe', implatation: 'Amiens'},
+  {id: 10, nomprenom: 'Agapetus Tadeáš', poste: 'Développeur PHP', manager: 'John Doe', implatation: 'Paris'},
+  {id: 11, nomprenom: 'Carwyn Fachtna', poste: 'Développeur JAVA', manager: 'John Doe', implatation: 'Paris'},
+  {id: 12, nomprenom: 'Nehemiah Tatius', poste: 'Développeur C++', manager: 'John Doe', implatation: 'Nantes'},
+  {id: 13, nomprenom: 'Ebbe Gemariah', poste: 'Développeur C++', manager: 'John Doe', implatation: 'Paris'},
+  {id: 14, nomprenom: 'Eustorgios Amulius', poste: 'Développeur C#', manager: 'John Doe', implatation: 'Amiens'},
+  {id: 15, nomprenom: 'Leopold Gáspár', poste: 'Développeur PHP', manager: 'John Doe', implatation: 'Paris'},
+  {id: 16, nomprenom: 'Pompeius René', poste: 'Développeur JAVA', manager: 'John Doe', implatation: 'Paris'},
+  {id: 17, nomprenom: 'Paĉjo Jadon', poste: 'Développeur C++', manager: 'John Doe', implatation: 'Nantes'},
+  {id: 18, nomprenom: 'Micheal Mercurius', poste: 'Développeur C++', manager: 'John Doe', implatation: 'Paris'},
+  {id: 19, nomprenom: 'Ganesha Dubhghall', poste: 'Développeur C#', manager: 'John Doe', implatation: 'Amiens'},
+  {id: 20, nomprenom: 'Hiroto Šimun', poste: 'Développeur PHP', manager: 'John Doe', implatation: 'Paris'},
+  {id: 21, nomprenom: 'Vishnu Serghei', poste: 'Développeur JAVA', manager: 'John Doe', implatation: 'Paris'},
+  {id: 22, nomprenom: 'Zbyněk Phoibos', poste: 'Développeur C++', manager: 'John Doe', implatation: 'Nantes'},
+  {id: 23, nomprenom: 'Aulus Agmundr', poste: 'Développeur JAVA', manager: 'John Doe', implatation: 'Amiens'},
+  {id: 42, nomprenom: 'Ford Prefect', poste: 'Développeur Python', manager: 'Alien', implatation: 'Don\'t panic!'}
+]
+
+export default usersData
