@@ -37,6 +37,7 @@ const UpdateFormation = React.lazy(() => import('./views/formation/updateFormati
 const UpdateTitrePoste = React.lazy(() => import('./views/titre-poste/modification-titre-poste'));
 const AllPoste = React.lazy(() => import('./views/poste/listPoste'));
 const CreatePoste = React.lazy(() => import('./views/poste/creation-poste'));
+const UpdatePoste = React.lazy(() => import('./views/poste/modification-poste'));
 
 
 const routes = [
@@ -83,6 +84,7 @@ const routes = [
   { path: '/poste', exact: true, name: 'Postes', component: AllPoste },
   { path: '/poste/liste',exact: true, name: 'Liste des postes', component: AllPoste },
   { path: '/poste/creation',exact: true, name: 'Création d\'un poste', component: CreatePoste },
+  { path: '/poste/modification/:id',exact: true, name: 'Modifier un poste', component: UpdatePoste },
 ];
 
 export default routes;

@@ -13,7 +13,15 @@ class SalariesService {
   }*/
 
   getAllSalariesWithoutPoste() {
-    return axios.get(API_URL + "/sans-poste", { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+    return axios.get(API_URL + `/sans-poste`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  }
+
+  getAllSalariesByDomaineAndCompetence(domaine, competence) {
+    return axios.get(API_URL + `/salaries-domaine-competence/${domaine}/${competence}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  }
+
+  getAllSalariesWithoutPosteByDomaineAndCompetence(domaine, competence) {
+    return axios.get(API_URL + `/salaries-sans-poste-domaine-competence/${domaine}/${competence}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
 
   getUser(){

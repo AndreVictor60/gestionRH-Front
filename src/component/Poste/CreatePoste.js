@@ -7,16 +7,18 @@ import PosteService from "../../services/poste.service";
 import CompetenceService from "../../services/competence.service";
 import TypeContratService from "../../services/type-contrat.service";
 import EntrepriseService from "../../services/entreprises.service";
+import DomainesService from "../../services/domaine.service";
 import Select from 'react-select';
 import swal from 'sweetalert';
 import { compareDateStringWithDateCurrent, ifNumberWithDecimal } from "src/utils/fonctions";
 class CreatePoste extends Component {
   constructor(props){
       super(props);
-      //this.getAllDomaine = this.getAllDomaine.bind(this);
-      //this.onChangeDomaine = this.onChangeDomaine.bind(this);
+
       this.getAllSalarie = this.getAllSalarie.bind(this);
-      this.getSalarieSansPoste = this.getSalarieSansPoste.bind(this);
+      this.getAllSalarieByDomaineAndCompetence = this.getAllSalarieByDomaineAndCompetence.bind(this);
+      this.getAllSalarieWithoutPoste = this.getAllSalarieWithoutPoste.bind(this);
+      this.getAllSalarieWithoutPosteByDomaineAndCompetence = this.getAllSalarieWithoutPosteByDomaineAndCompetence.bind(this);
       this.onChangeSalarie = this.onChangeSalarie.bind(this);
       this.onchangeSalarieSansPoste = this.onchangeSalarieSansPoste.bind(this);
       this.getAllTitrePoste = this.getAllTitrePoste.bind(this);
@@ -30,16 +32,21 @@ class CreatePoste extends Component {
       this.onChangeEntreprise = this.onChangeEntreprise.bind(this);
       this.onChangeManager = this.onChangeManager.bind(this);
       this.onChangeCompetence = this.onChangeCompetence.bind(this);
+      this.getAllCompetenceByDomaine = this.getAllCompetenceByDomaine.bind(this);
       this.onChangeFichierContrat = this.onChangeFichierContrat.bind(this);
       this.onChangeMaitreApprentissage = this.onChangeMaitreApprentissage.bind(this);
       this.ifSAlariePoste = this.ifSAlariePoste.bind(this);
       this.savePoste = this.savePoste.bind(this);
+      
+      this.getAllDomaine = this.getAllDomaine.bind(this);
+      this.onChangeDomaine = this.onChangeDomaine.bind(this);
 
       this.state = {
           errors: {dateFinInf: null, volumeNeg: null, extensionFichier: null, envoiFichier: null, dateInfAujDHui: null, salarieAcPoste: null},
           salaries: [],
           domaines: [],
-          salariesSansPoste: [],
+          domainePoste: null,
+          competencesPoste: [],
           titresPoste: [],
           typesContrat: [],
           entreprises: [],
@@ -80,41 +87,14 @@ class CreatePoste extends Component {
   }
 
   componentDidMount() {
-    //this.getAllDomaine();
-    this.getAllSalarie();
+    this.getAllDomaine();
+    //this.getAllSalarieWithoutPoste();
     this.getAllTitrePoste();
     this.getAllTypeContrat();
     this.getAllEntreprise();
     this.getAllManager();
-    this.getAllCompetence();
     this.getAllMaitreApprentissage();
   }
-
-  /*onChangeDomaine(e) {
-    const idDomaine = e.target.value;
-    if (0 !== idDomaine) {
-      this.setState((prevState) => ({
-        currentPoste: {
-          ...prevState.currentPoste,
-          salarie: {
-            id: idSalarie
-          }
-        }
-      }));
-    }
-  }
-  getAllDomaine() {
-    SalariesService.getAll()
-    .then(response => {
-      console.log("then getall");
-      this.setState({
-        salaries: response.data
-      });
-    })
-    .catch(e => {
-      console.log(e);
-    });
-  }*/
 
   onChangeSalarie(e) {
     const idSalarie = e.target.value;
@@ -131,6 +111,7 @@ class CreatePoste extends Component {
     }
     console.log("salarie : ", this.state.salaries);
   }
+
   getAllSalarie() {
     SalariesService.getAll()
     .then(response => {
@@ -142,23 +123,54 @@ class CreatePoste extends Component {
       console.log(e);
     });
   }
-  
-  getSalarieSansPoste(){
-    this.setState({
-      salaries: this.state.salaries.filter(salarie => salarie.postes.length === 0 || !compareDateStringWithDateCurrent(salarie.postes[0].dateFin))
+
+  getAllSalarieByDomaineAndCompetence(domaine, competence) {
+    SalariesService.getAllSalariesByDomaineAndCompetence(domaine, competence.map(c => c.value))
+    .then(response => {
+      this.setState({
+        salaries: response.data
+      });
+    })
+    .catch(e => {
+      console.log(e);
     });
-    //console.log("2 salariesSansPoste : ",this.state.salaries.filter(salarie => salarie.postes.length === 0 || !compareDateStringWithDateCurrent(salarie.postes[0].dateFin)));
-    //console.log("salariesansposte : ",this.state.salaries);
   }
 
-  onchangeSalarieSansPoste(e){
-    if(e.target.checked){
-      //salarie sans poste
-      this.getSalarieSansPoste();
+  getAllSalarieWithoutPoste() {
+    SalariesService.getAll()
+    .then(response => {
+      this.setState({
+        salaries: response.data.filter(salarie => salarie.postes.length === 0 || (!compareDateStringWithDateCurrent(salarie.postes[0].dateFin) && salarie.postes[0].dateFin != null)),
+      });
+      console.log("salarie : ",this.state.salaries);
+    })
+    .catch(e => {
+      console.log(e);
+    });
+  }
+
+  getAllSalarieWithoutPosteByDomaineAndCompetence(domaine, competence) {
+    SalariesService.getAllSalariesWithoutPosteByDomaineAndCompetence(domaine, competence.map(c => c.value))
+    .then(response => {
+      this.setState({
+        salaries: response.data,
+      });
+      console.log("salarie : ",this.state.salaries);
+    })
+    .catch(e => {
+      console.log(e);
+    });
+  }
+
+  onchangeSalarieSansPoste(){
+    //(e) if(e.target.checked){
+    if(document.getElementById("salariesansposte").checked){
+      //tout les salaries
+      this.getAllSalarieByDomaineAndCompetence(this.state.domainePoste, this.state.currentPoste.competencesRequises);
     }
     else{
-      //tout les salaries
-      this.getAllSalarie()
+      //salarie sans poste
+      this.getAllSalarieWithoutPosteByDomaineAndCompetence(this.state.domainePoste, this.state.currentPoste.competencesRequises);
     }
   }
 
@@ -176,15 +188,49 @@ class CreatePoste extends Component {
       }
   }
   getAllTitrePoste() {
-      TitrePosteService.getAllTitrePoste()
-        .then(response => {
-          this.setState({
-            titresPoste: response.data
-          });
-        })
-        .catch(e => {
-          console.log(e);
+    TitrePosteService.getAllTitrePoste()
+      .then(response => {
+        this.setState({
+          titresPoste: response.data
         });
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
+
+  getAllDomaine() {
+    DomainesService.getAllDomaine()
+      .then(response => {
+        this.setState({
+          domaines: response.data
+        });
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
+
+  onChangeDomaine(e){
+    const idDomaine = e.target.value;
+    if ("0" !== idDomaine) {
+      document.getElementById('competenceFormPoste').className = "row";
+      this.setState({
+        domainePoste: idDomaine
+      });
+      //recupérer etat checkbox et appeler onchangeSalarieSansPoste(e)
+      //this.onchangeSalarieSansPoste();
+      this.getAllCompetenceByDomaine(idDomaine);
+      console.log("domainePoste : ", this.state.domainePoste);
+    }else{
+      document.getElementById('competenceFormPoste').className = "row d-none";
+      document.getElementById('bodyFormPoste').className = "form-group d-none";
+      this.setState({
+        currentPoste: {
+          competencesRequises: null
+        }
+      });
+    }
   }
 
   onChangeTypeContrat(e) {
@@ -213,19 +259,42 @@ class CreatePoste extends Component {
   }
 
   onChangeCompetence(e) {
-    this.setState((prevState) => ({
-      currentPoste: {
-        ...prevState.currentPoste,
-        competencesRequises: e
-      }
-    }))
-    
+    console.log("competence : ",e.length);
+    if (e.length > 0) {
+      this.setState((prevState) => ({
+        currentPoste: {
+          ...prevState.currentPoste,
+          competencesRequises: e
+        }
+      }));
+      document.getElementById('bodyFormPoste').className = "form-group";
+      //this.onchangeSalarieSansPoste();
+      //console.log("COMP : domaine : ",this.state.domainePoste," || competence : ", e);
+      this.getAllSalarieWithoutPosteByDomaineAndCompetence(this.state.domainePoste, e)
+    }else{
+      document.getElementById('bodyFormPoste').className = "form-group d-none";
+    }
   }
-  getAllCompetence(){
-    CompetenceService.getAllCompetence().then((response) => {
+  getAllCompetenceByDomaine(idDomaine){
+    /*CompetenceService.getAllCompetence().then((response) => {
       this.setState({ competences: response.data });
     })
-    .catch((e) => { console.log(e) })
+    .catch((e) => { console.log(e) })*/
+    console.log("if comp : ",idDomaine);
+    if(idDomaine){
+      console.log("if comp 2 : ",idDomaine);
+      CompetenceService.getCompetenceByIdDomaine(parseInt(idDomaine)).then((response) => {
+        this.setState({ competences: response.data });
+
+      })
+      .catch((e) => { console.log(e) })
+    }else{
+      console.log("else comp 2 : ",this.state.domainePoste);
+      CompetenceService.getCompetenceByIdDomaine(0).then((response) => {
+        this.setState({ competences: response.data });
+      })
+      .catch((e) => { console.log(e) })
+    }
   }
 
   onChangeDateDebut(e) {
@@ -472,8 +541,37 @@ class CreatePoste extends Component {
   }
 
   ifSAlariePoste(idsalarie){
-    const salarie = this.state.salaries.find(salarie => salarie.id === parseInt(idsalarie));
-    if(salarie.postes.length === 0){
+    console.log("idsalarie : ",typeof(idsalarie))
+    if(idsalarie !== "0"){
+      const salarie = this.state.salaries.find(salarie => salarie.id === parseInt(idsalarie));
+      if(salarie.postes.length === 0){
+        this.setState((prevState) => ({
+          errors: {
+              ...prevState.errors,
+              salarieAcPoste: null,
+          }
+        }));
+        return false; //n'a pas de poste
+      }
+      else{
+        if(compareDateStringWithDateCurrent(salarie.postes[0].dateFin) || salarie.postes[0].dateFin === null){
+          this.setState((prevState) => ({
+            errors: {
+                ...prevState.errors,
+                salarieAcPoste: "Le salarié à un poste en cours",
+            }
+          }));
+          return true; //a un poste
+        }else{
+          this.setState((prevState) => ({
+            errors: {
+                ...prevState.errors,
+                salarieAcPoste: null,
+            }
+          }));
+        }
+      }
+    }else{
       this.setState((prevState) => ({
         errors: {
             ...prevState.errors,
@@ -481,24 +579,6 @@ class CreatePoste extends Component {
         }
       }));
       return false; //n'a pas de poste
-    }
-    else{
-      if(compareDateStringWithDateCurrent(salarie.postes[0].dateFin) || salarie.postes[0].dateFin === null){
-        this.setState((prevState) => ({
-          errors: {
-              ...prevState.errors,
-              salarieAcPoste: "Le salarié à un poste en cours",
-          }
-        }));
-        return true; //a un poste
-      }else{
-        this.setState((prevState) => ({
-          errors: {
-              ...prevState.errors,
-              salarieAcPoste: null,
-          }
-        }));
-      }
     }
   }
 
@@ -557,174 +637,192 @@ class CreatePoste extends Component {
   }
 
   render() {
-      const {salaries, titresPoste, typesContrat, entreprises, managers, competences, maitresApprentissage} = this.state;
+      const {salaries, titresPoste, typesContrat, entreprises, managers, competences, maitresApprentissage, domaines} = this.state;
       //console.log(this.state.errors);
       return (
+        <>
           <div className="submit-form">
-          <div>
-          <form name="createPoste" onSubmit={this.savePoste}>
-          <div className="row">
-              <div className="col">
-                <div className="form-group">
-                  <label htmlFor="salarie">Salarié *</label>
-                  <CSelect custom name="salarie" id="salarie" onChange={this.onChangeSalarie} required>
-                    <option value="0">Veuillez sélectionner un salarié</option>
-                    {salaries.map((salarie, key) => (
-                      <option key={key} value={salarie.id}>
-                        {salarie.nom + " " + salarie.prenom}
-                      </option>
-                    ))}
-                  </CSelect>
-                </div>
-                <div className="form-group form-check">
-                  <input type="checkbox" value="1" className="form-check-input" id="salariesansposte" onChange={this.onchangeSalarieSansPoste}/>
-                  <label className="form-check-label" htmlFor="salariesansposte">Afficher les salariés sans poste</label>
-                </div>
-              </div>
-            </div>
-            {this.state.errors.salarieAcPoste != null ? <CAlert color="warning">{this.state.errors.salarieAcPoste}</CAlert> : ""}
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="titrePoste">Intitulé de poste *</label>
-                  <CSelect custom name="titrePoste" id="titrePoste" onChange={this.onChangeTitrePoste} required>
-                    <option value="0">Veuillez sélectionner un intitulé de poste</option>
-                    {titresPoste.map((titrePoste, key) => (
-                      <option key={key} value={titrePoste.id}>
-                        {titrePoste.intitule}
+                  <label htmlFor="titrePoste">Domaine du poste *</label>
+                  <CSelect custom name="titrePoste" id="titrePoste" onChange={this.onChangeDomaine} required>
+                    <option value="0">Veuillez sélectionner un Domaine</option>
+                    {domaines.map((domaine, key) => (
+                      <option key={key} value={domaine.id}>
+                        {domaine.titre}
                       </option>
                     ))}
                   </CSelect>
                 </div>
               </div>
             </div>
-            <div className="row">
-              <div className="col">
-                <div className="form-group">
-                  <label htmlFor="typeContrat">Type de contrat *</label>
-                  <CSelect custom name="typeContrat" id="typeContrat" onChange={this.onChangeTypeContrat} required>
-                    <option value="0">Veuillez sélectionner un type de contrat</option>
-                    {typesContrat.map((typeContrat, key) => (
-                      <option key={key} value={typeContrat.id}>
-                        {typeContrat.type}
-                      </option>
-                    ))}
-                  </CSelect>
+            <form name="createPoste" onSubmit={this.savePoste} >
+              <div className="row d-none" id="competenceFormPoste">
+                <div className="col">
+                  <div className="form-group">
+                    <label htmlFor="skills">Compétences *</label>
+                      <Select 
+                      name="competences"
+                      placeholder="Liste des compétences"
+                      value={this.state.currentPoste.competences}
+                      options={competences.map((e) => ({ label: e.nom, value: e.id }))}
+                      onChange={this.onChangeCompetence}
+                      isMulti
+                      required
+                      />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="row">
-              <div className="col">
-              <div className="form-group">
-              <label htmlFor="skills">Compétences *</label>
-                <Select 
-                name="competences"
-                placeholder="Liste des compétences"
-                value={this.state.currentPoste.competences}
-                options={competences.map(e => ({ label: e.nom, value: e.id}))}
-                onChange={this.onChangeCompetence}
-                isMulti
-                required
-                />
-                </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col">
-                <div className="form-group">
-                  <label htmlFor="dateDebut">Date de début *</label>
-                  <input type="date" className="form-control" id="dateDebut" onChange={this.onChangeDateDebut} required />
-                </div>
-              </div>
-              <div className="col">
-                <div className="form-group">
-                  <label htmlFor="dateFin">Date de fin</label>
-                  <input type="date" className="form-control" id="dateFin" onChange={this.onChangeDateFin}/>
-                </div>
-              </div>
-            </div>
-            {this.state.errors.dateFinInf != null ? <CAlert color="danger">{this.state.errors.dateFinInf}</CAlert> : ""}
-            {this.state.errors.dateInfAujDHui != null ? <CAlert color="danger">{this.state.errors.dateInfAujDHui}</CAlert> : ""}
-            <div className="row">
-              <div className="col">
-                <div className="form-group">
-                  <label htmlFor="dateDebut">Volume horaire *</label>
-                  <input type="number" className="form-control" id="volumeHoraire" onChange={this.onChangeVolumeHoraire} min={0} defaultValue={0} pattern="[0-9]*" required />
-                  <div onChange={this.onChangeTypeHoraire} className="form-check">
-                    <div className="form-check form-check-inline">
-                      <input type="radio" value="1" name="typeHoraire" id="typeHoraireJ" className="form-check-input" required /> 
-                      <label className="form-check-label" htmlFor="typeHoraireJ">
-                        Jour
-                      </label>
+              <div className="form-group d-none" id="bodyFormPoste">
+                <div className="row">
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="salarie">Salarié *</label>
+                      <CSelect custom name="salarie" id="salarie" onChange={this.onChangeSalarie} required>
+                        <option value="0">Veuillez sélectionner un salarié</option>
+                        {salaries.map((salarie, key) => (
+                          <option key={key} value={salarie.id}>
+                            {salarie.nom + " " + salarie.prenom}
+                          </option>
+                        ))}
+                      </CSelect>
                     </div>
-                    <div className="form-check form-check-inline">
-                      <input type="radio" value="0" name="typeHoraire" id="typeHoraireH" className="form-check-input" required defaultChecked /> 
-                      <label className="form-check-label" htmlFor="typeHoraireH">
-                        Heure
-                      </label>
+                    <div className="form-group form-check">
+                      <input type="checkbox" value="1" className="form-check-input" id="salariesansposte" onChange={this.onchangeSalarieSansPoste}/>
+                      <label className="form-check-label" htmlFor="salariesansposte">Afficher les salariés</label>
                     </div>
                   </div>
                 </div>
-                {this.state.errors.volumeNeg != null ? <CAlert color="danger">{this.state.errors.volumeNeg}</CAlert> : ""}
-              </div>
-            </div>
-            <div className="row">
-              <div className="col">
+                <div className="row">
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="typeContrat">Type de contrat *</label>
+                      <CSelect custom name="typeContrat" id="typeContrat" onChange={this.onChangeTypeContrat} required>
+                        <option value="0">Veuillez sélectionner un type de contrat</option>
+                        {typesContrat.map((typeContrat, key) => (
+                          <option key={key} value={typeContrat.id}>
+                            {typeContrat.type}
+                          </option>
+                        ))}
+                      </CSelect>
+                    </div>
+                  </div>
+                </div>
+                {this.state.errors.salarieAcPoste != null ? <CAlert color="warning">{this.state.errors.salarieAcPoste}</CAlert> : ""}
+                <div className="row">
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="titrePoste">Intitulé de poste *</label>
+                      <CSelect custom name="titrePoste" id="titrePoste" onChange={this.onChangeTitrePoste} required>
+                        <option value="0">Veuillez sélectionner un intitulé de poste</option>
+                        {titresPoste.map((titrePoste, key) => (
+                          <option key={key} value={titrePoste.id}>
+                            {titrePoste.intitule}
+                          </option>
+                        ))}
+                      </CSelect>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="dateDebut">Date de début *</label>
+                      <input type="date" className="form-control" id="dateDebut" onChange={this.onChangeDateDebut} required />
+                    </div>
+                  </div>
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="dateFin">Date de fin</label>
+                      <input type="date" className="form-control" id="dateFin" onChange={this.onChangeDateFin}/>
+                    </div>
+                  </div>
+                </div>
+                {this.state.errors.dateFinInf != null ? <CAlert color="danger">{this.state.errors.dateFinInf}</CAlert> : ""}
+                {this.state.errors.dateInfAujDHui != null ? <CAlert color="danger">{this.state.errors.dateInfAujDHui}</CAlert> : ""}
+                <div className="row">
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="dateDebut">Volume horaire *</label>
+                      <input type="number" className="form-control" id="volumeHoraire" onChange={this.onChangeVolumeHoraire} min={0} defaultValue={0} pattern="[0-9]*" required />
+                      <div onChange={this.onChangeTypeHoraire} className="form-check">
+                        <div className="form-check form-check-inline">
+                          <input type="radio" value="1" name="typeHoraire" id="typeHoraireJ" className="form-check-input" required /> 
+                          <label className="form-check-label" htmlFor="typeHoraireJ">
+                            Jour
+                          </label>
+                        </div>
+                        <div className="form-check form-check-inline">
+                          <input type="radio" value="0" name="typeHoraire" id="typeHoraireH" className="form-check-input" required defaultChecked /> 
+                          <label className="form-check-label" htmlFor="typeHoraireH">
+                            Heure
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    {this.state.errors.volumeNeg != null ? <CAlert color="danger">{this.state.errors.volumeNeg}</CAlert> : ""}
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="entreprise">Entreprise *</label>
+                      <CSelect custom name="entreprise" id="entreprise" onChange={this.onChangeEntreprise} required>
+                        <option value="0">Veuillez sélectionner une entreprise</option>
+                        {entreprises.map((entreprise, key) => (
+                          <option key={key} value={entreprise.id}>
+                            {entreprise.nom}
+                          </option>
+                        ))}
+                      </CSelect>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="manager">Manager</label>
+                      <CSelect custom name="manager" id="manager" onChange={this.onChangeManager} required>
+                        <option value="0">Veuillez sélectionner un Manageur</option>
+                        {managers.map((manager, key) => (
+                          <option key={key} value={manager.id}>
+                            {manager.nom+" "+manager.prenom}
+                          </option>
+                        ))}
+                      </CSelect>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="manager">Maitre d'apprentissage</label>
+                      <CSelect custom name="manager" id="manager" onChange={this.onChangeMaitreApprentissage} required>
+                        <option value="0">Veuillez sélectionner un maitre d'apprentissage</option>
+                        {maitresApprentissage.map((maitreApprentissage, key) => (
+                          <option key={key} value={maitreApprentissage.id}>
+                            {maitreApprentissage.nom+" "+maitreApprentissage.prenom}
+                          </option>
+                        ))}
+                      </CSelect>
+                    </div>
+                  </div>
+                </div>
                 <div className="form-group">
-                  <label htmlFor="entreprise">Entreprise *</label>
-                  <CSelect custom name="entreprise" id="entreprise" onChange={this.onChangeEntreprise} required>
-                    <option value="0">Veuillez sélectionner une entreprise</option>
-                    {entreprises.map((entreprise, key) => (
-                      <option key={key} value={entreprise.id}>
-                        {entreprise.nom}
-                      </option>
-                    ))}
-                  </CSelect>
-                </div>
+                    <label htmlFor="contrat">Contrat (PDF) *</label>
+                      <input type="file" id="contrat" name="contrat" className="form-control-file" onChange={this.onChangeFichierContrat} accept="application/pdf"/>
+                    </div>
+                {this.state.errors.extensionFichier != null ? <CAlert color="danger">{this.state.errors.extensionFichier}</CAlert> : ""}
+                <CButton type="submit" block  color="info">
+                  Ajout d'un salarié
+                </CButton>
               </div>
-            </div>
-            <div className="row">
-              <div className="col">
-                <div className="form-group">
-                  <label htmlFor="manager">Manager</label>
-                  <CSelect custom name="manager" id="manager" onChange={this.onChangeManager} required>
-                    <option value="0">Veuillez sélectionner un Manageur</option>
-                    {managers.map((manager, key) => (
-                      <option key={key} value={manager.id}>
-                        {manager.nom+" "+manager.prenom}
-                      </option>
-                    ))}
-                  </CSelect>
-                </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col">
-                <div className="form-group">
-                  <label htmlFor="manager">Maitre d'apprentissage</label>
-                  <CSelect custom name="manager" id="manager" onChange={this.onChangeMaitreApprentissage} required>
-                    <option value="0">Veuillez sélectionner un maitre d'apprentissage</option>
-                    {maitresApprentissage.map((maitreApprentissage, key) => (
-                      <option key={key} value={maitreApprentissage.id}>
-                        {maitreApprentissage.nom+" "+maitreApprentissage.prenom}
-                      </option>
-                    ))}
-                  </CSelect>
-                </div>
-              </div>
-            </div>
-            <div className="form-group">
-                <label htmlFor="contrat">Contrat (PDF) *</label>
-                  <input type="file" id="contrat" name="contrat" className="form-control-file" onChange={this.onChangeFichierContrat} accept="application/pdf"/>
-                </div>
-            {this.state.errors.extensionFichier != null ? <CAlert color="danger">{this.state.errors.extensionFichier}</CAlert> : ""}
-            <CButton type="submit" block  color="info">
-              Ajout d'un salarié
-            </CButton>
-          </form>
-          </div>
-      </div>
+            </form>
+        </div>
+      </>
       )
+    
   }
 }
 export default withRouter(CreatePoste);
