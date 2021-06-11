@@ -127,7 +127,8 @@ class UpdateEntreprise extends Component {
 }
 
 
-  updateEntreprise() {
+  updateEntreprise(e) {
+    e.preventDefault();
     if(this.state.currentErrors.nameBool && this.state.currentErrors.addressBool){
       this.setState({
         message: "Une erreur est présente dans votre formulaire.",
