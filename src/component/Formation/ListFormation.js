@@ -1,40 +1,31 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
 import FormationService from '../../services/formations.service';
-import Pagination from '../Pagination/Pagination';
 import moment from 'moment';
+import ReactPaginate from 'react-paginate';
 class ListFormation extends Component {
     constructor(props) {
         super(props);
-        this.handleClick = this.handleClick.bind(this);
+        this.retrieveFormation = this.retrieveFormation.bind(this);
+        this.handlePageClick = this.handlePageClick.bind(this);
         this.state={
             formations: [],
+            itemsPerPage: 5,
             currentPage: 0,
-            sizePage: 10,
-            nbTotalFormations: 0,
-            nbTotalPage: 0
+            pageCount: 0,
         }
     }
 
     componentDidMount(){
-        this.retrieveFormation(this.state.currentPage);
-        this.getNbTotalFormation();
+        this.retrieveFormation();
     }
-    handleClick(pageNum) {
-      this.setState({ currentPage: pageNum });
-      this.retrieveFormation(pageNum);
-  }
-    
-    getNbTotalFormation(){
-        FormationService.countFormation().then(resp => {
-          this.setState({
-            nbTotalFormations: resp.data
-          }); 
-        })
-      }
 
-    retrieveFormation(pageNum) {
-        FormationService.getAllFormationByPage(pageNum,this.state.sizePage)
+    retrieveFormation() {
+      FormationService.countFormation().then((resp) => {
+        let nbPage = Math.ceil(resp.data / this.state.itemsPerPage)
+        this.setState({pageCount: nbPage })
+     }).catch((e) => { console.log(e)});
+        FormationService.getAllFormationByPage(this.state.currentPage,this.state.itemsPerPage)
         .then(response => {
             this.setState({
                 formations: response.data
@@ -44,13 +35,17 @@ class ListFormation extends Component {
           console.log(e);
         });
     }
+
+    handlePageClick = (data) => {
+      let selected = data.selected;
+      this.setState({ currentPage: selected }, () => {
+        this.retrieveFormation();
+      });
+    };
     
     render() {
-        const { formations,currentPage,nbTotalFormations,sizePage } = this.state;
-        const nbPage = Math.ceil(nbTotalFormations / sizePage);
-        const nextPage = () => this.setState({ currentPage: currentPage + 1 });
-    
-        const prevPage = () => this.setState({ currentPage: currentPage - 1 });
+        const { formations } = this.state;
+
         return (
             <div className="row mt-4">
               <div className="col-lg-12">
@@ -80,7 +75,25 @@ class ListFormation extends Component {
                       )}
                       </tbody>
                   </table>
-                  <Pagination totalPages={nbPage} currentPage={currentPage}  paginate={this.handleClick} nextPage={nextPage} prevPage={prevPage} ></Pagination>
+                  <ReactPaginate
+              previousLabel={'Précédent'}
+              nextLabel={'Suivant'}
+              breakLabel={'...'}
+              pageCount={this.state.pageCount}
+              marginPagesDisplayed={1}
+              pageRangeDisplayed={4}
+              onPageChange={this.handlePageClick}
+              containerClassName="pagination"
+              activeClassName="active"
+              pageLinkClassName="page-link"
+              breakLinkClassName="page-link"
+              nextLinkClassName="page-link"
+              previousLinkClassName="page-link"
+              pageClassName="page-item"
+              breakClassName="page-item"
+              nextClassName="page-item"
+              previousClassName="page-item"
+            />
                 </div>
             </div>
         )

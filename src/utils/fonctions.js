@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export function compareDateStringWithDateCurrent(string){
     let datePoste = new Date(string).getTime();
     let dateCurrent = new Date().getTime();
@@ -42,4 +44,19 @@ export function ifNumberWithDecimal(number){
 export function isValidDate(value) {
   const dateWrapper = new Date(value);
   return !isNaN(dateWrapper.getDate());
+}
+/**
+ * 
+ * @param {date} value 
+ * @returns Age par rapport a la date en cours
+ */
+export function isMajor(value){
+  const years = moment().diff(value, 'years',false);
+  console.log("age",years)
+  if(years >= 18){
+    return true;
+  }else{
+    return false;
+  }
+  
 }

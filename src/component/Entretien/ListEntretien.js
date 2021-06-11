@@ -3,13 +3,18 @@ import EntretienService from "../../services/entretien.service"
 import moment from 'moment';
 import momentFR from 'moment/locale/fr';
 import { Link } from "react-router-dom";
+import ReactPaginate from 'react-paginate';
 
 class ListEntretien extends Component {
     constructor(props) {
       super(props);
       this.retrieveEntretien = this.retrieveEntretien.bind(this);
+      this.handlePageClick = this.handlePageClick.bind(this);
       this.state = {
-        entretiens: []
+        entretiens: [],
+        itemsPerPage: 5,
+        currentPage: 0,
+        pageCount: 0,
       };
       moment.locale('fr',momentFR );
     }
@@ -19,7 +24,11 @@ class ListEntretien extends Component {
     }
 
     retrieveEntretien() {
-      EntretienService.getAllEntretiens()
+      EntretienService.count().then((resp) => {
+        let nbPage = Math.ceil(resp.data / this.state.itemsPerPage)
+        this.setState({pageCount: nbPage })
+     }).catch((e) => { console.log(e)});
+      EntretienService.getAllEntretiensByPage(this.state.currentPage,this.state.itemsPerPage)
         .then(response => {
           this.setState({
             entretiens: response.data
@@ -30,6 +39,13 @@ class ListEntretien extends Component {
           console.log(e);
         });
     }
+
+    handlePageClick = (data) => {
+      let selected = data.selected;
+      this.setState({ currentPage: selected }, () => {
+        this.retrieveEntretien();
+      });
+    };
   
     render() {
       
@@ -62,6 +78,25 @@ class ListEntretien extends Component {
                       )}
                       </tbody>
                   </table>
+                  <ReactPaginate
+              previousLabel={'Précédent'}
+              nextLabel={'Suivant'}
+              breakLabel={'...'}
+              pageCount={this.state.pageCount}
+              marginPagesDisplayed={1}
+              pageRangeDisplayed={4}
+              onPageChange={this.handlePageClick}
+              containerClassName="pagination"
+              activeClassName="active"
+              pageLinkClassName="page-link"
+              breakLinkClassName="page-link"
+              nextLinkClassName="page-link"
+              previousLinkClassName="page-link"
+              pageClassName="page-item"
+              breakClassName="page-item"
+              nextClassName="page-item"
+              previousClassName="page-item"
+            />
                 </div>
             </div>
           </>

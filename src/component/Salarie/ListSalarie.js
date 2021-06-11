@@ -5,12 +5,18 @@ import SalariesService from "../../services/salaries.service";
 import { compareDateStringWithDateCurrent } from "../../utils/fonctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faEye } from "@fortawesome/free-solid-svg-icons";
+import ReactPaginate from 'react-paginate';
+
 class ListSalarie extends Component {
   constructor(props) {
     super(props);
     this.retrieveSalaries = this.retrieveSalaries.bind(this);
+    this.handlePageClick = this.handlePageClick.bind(this);
     this.state = {
       salaries: [],
+      itemsPerPage: 5,
+      currentPage: 0,
+      pageCount: 0
     };
   }
 
@@ -18,8 +24,13 @@ class ListSalarie extends Component {
     this.retrieveSalaries();
   }
 
+
   retrieveSalaries() {
-    SalariesService.getAll()
+    SalariesService.count().then((resp) => {
+       let nbPage = Math.ceil(resp.data / this.state.itemsPerPage)
+       this.setState({pageCount: nbPage })
+    }).catch((e) => { console.log(e)});
+    SalariesService.getAllSalariesByPage(this.state.currentPage,this.state.itemsPerPage)
       .then((response) => {
         this.setState({
           salaries: response.data,
@@ -30,6 +41,13 @@ class ListSalarie extends Component {
         console.log(e);
       });
   }
+
+  handlePageClick = (data) => {
+    let selected = data.selected;
+    this.setState({ currentPage: selected }, () => {
+      this.retrieveSalaries();
+    });
+  };
 
   render() {
     const { salaries } = this.state;
@@ -118,6 +136,25 @@ class ListSalarie extends Component {
                 ))}
               </tbody>
             </table>
+            <ReactPaginate
+              previousLabel={'Précédent'}
+              nextLabel={'Suivant'}
+              breakLabel={'...'}
+              pageCount={this.state.pageCount}
+              marginPagesDisplayed={1}
+              pageRangeDisplayed={4}
+              onPageChange={this.handlePageClick}
+              containerClassName="pagination"
+              activeClassName="active"
+              pageLinkClassName="page-link"
+              breakLinkClassName="page-link"
+              nextLinkClassName="page-link"
+              previousLinkClassName="page-link"
+              pageClassName="page-item"
+              breakClassName="page-item"
+              nextClassName="page-item"
+              previousClassName="page-item"
+            />
           </div>
         </div>
       </>

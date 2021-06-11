@@ -9,10 +9,14 @@ import {
   CCol,
   CRow,
 } from "@coreui/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
 
 export default class Salarie extends Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
+    
     this.state = {
       currentSalarie: {
         nom: "",
@@ -47,15 +51,27 @@ export default class Salarie extends Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.getSalarie(this.props.salarieId.id);
+  }
+
+  componentDidUpdate(){
+    this._isMounted = true;
+    this.getSalarie(this.props.salarieId.id);
+  }
+
+  componentWillUnmount(){
+    this._isMounted = false;
   }
 
   getSalarie(id) {
     SalariesService.getSalarieById(id)
       .then((response) => {
-        this.setState({
-          currentSalarie: response.data,
-        });
+        if(this._isMounted){
+          this.setState({
+            currentSalarie: response.data,
+          });
+        }
       })
       .catch((e) => {
         console.log(e);
@@ -64,42 +80,41 @@ export default class Salarie extends Component {
 
   render() {
     const { currentSalarie } = this.state;
-    console.log(currentSalarie.postes);
     return (
       <CRow>
         <CCol>
           <CCard>
             <CCardHeader>
-              Profil de {currentSalarie.prenom + " " + currentSalarie.nom}
+              <h3>Profil de {currentSalarie.prenom + " " + currentSalarie.nom}</h3>
             </CCardHeader>
             <CCardBody>
               <CRow>
                 <CCol lg={6}>
                   <CCard>
                     <CCardHeader>
-                      User id: {this.props.salarieId.id}
+                    <h4><FontAwesomeIcon icon={["far", "address-card"]} /> Description</h4>
                     </CCardHeader>
                     <CCardBody>
                       <table className="table table-striped table-hover">
                         <tbody>
                           <tr>
-                            <td>Nom</td>
+                            <td className="font-weight-bold">Nom</td>
                             <td>{currentSalarie.nom}</td>
                           </tr>
                           <tr>
-                            <td>Prenom</td>
+                            <td className="font-weight-bold">Prenom</td>
                             <td>{currentSalarie.prenom}</td>
                           </tr>
                           <tr>
-                            <td>Email (pro)</td>
+                            <td className="font-weight-bold">Email (pro)</td>
                             <td>{currentSalarie.email}</td>
                           </tr>
                           <tr>
-                            <td>Date de naissance</td>
+                            <td className="font-weight-bold">Date de naissance</td>
                             <td>{currentSalarie.dateNaissance}</td>
                           </tr>
                           <tr>
-                            <td>Poste</td>
+                            <td className="font-weight-bold">Poste</td>
                             <td>
                               {currentSalarie.postes.map(
                                 (value, indexObject) => {
@@ -116,7 +131,7 @@ export default class Salarie extends Component {
                             </td>
                           </tr>
                           <tr>
-                            <td>Type de contrat</td>
+                            <td className="font-weight-bold">Type de contrat</td>
                             <td>
                               {currentSalarie.postes.map(
                                 (value, indexObject) => {
@@ -134,18 +149,28 @@ export default class Salarie extends Component {
                           </tr>
 
                           <tr>
-                            <td>Manager</td>
+                            <td className="font-weight-bold">Manager</td>
                             <td>
+                              
                               {currentSalarie.postes.map(
                                 (value, indexObject) => {
                                   if (indexObject === 0) {
+                                    if(value.manager !== null){
                                     return (
                                       <div key={value.id}>
-                                        {value.manager.prenom +
+                                        <Link to={"/salaries/profil/" + value.manager.id}>{value.manager.prenom +
                                           " " +
                                           value.manager.nom}
+                                          </Link>
                                       </div>
                                     );
+                                    }else{
+                                      return(
+                                        <div key={value.id}>
+                                        Aucun manager
+                                        </div>
+                                      )
+                                    }
                                   }
                                   return <div key={value.id}></div>;
                                 }
@@ -153,23 +178,23 @@ export default class Salarie extends Component {
                             </td>
                           </tr>
                           <tr>
-                            <td>Tel (pro)</td>
+                            <td className="font-weight-bold">Tel (pro)</td>
                             <td>{currentSalarie.telProfessionnel}</td>
                           </tr>
                           <tr>
-                            <td>Mobil (pro)</td>
+                            <td className="font-weight-bold">Mobil (pro)</td>
                             <td>{currentSalarie.mobileProfessionnel}</td>
                           </tr>
                           <tr>
-                            <td>Tel (personnel)</td>
+                            <td className="font-weight-bold">Tel (personnel)</td>
                             <td>{currentSalarie.telPersonnel}</td>
                           </tr>
                           <tr>
-                            <td>Mobil (personnel)</td>
+                            <td className="font-weight-bold">Mobil (personnel)</td>
                             <td>{currentSalarie.mobilPersonnel}</td>
                           </tr>
                           <tr>
-                            <td>Adresse</td>
+                            <td className="font-weight-bold">Adresse</td>
                             <td>{`${currentSalarie.adresse.numero} ${
                               currentSalarie.adresse.voie
                             } ${currentSalarie.adresse.codePostal} ${
@@ -179,15 +204,15 @@ export default class Salarie extends Component {
                             } `}</td>
                           </tr>
                           <tr>
-                            <td>Companie</td>
+                            <td className="font-weight-bold">Companie</td>
                             <td>{currentSalarie.entreprise.nom}</td>
                           </tr>
                           <tr>
-                            <td>Implantation</td>
+                            <td className="font-weight-bold">Implantation</td>
                             <td>{currentSalarie.entreprise.nom}</td>
                           </tr>
                           <tr>
-                            <td>Rôle</td>
+                            <td className="font-weight-bold">Rôle</td>
                             <td>
                               {currentSalarie.roles.map((d) => {
                                 return <div key={d.id}>{d.titre}</div>;
@@ -195,7 +220,7 @@ export default class Salarie extends Component {
                             </td>
                           </tr>
                           <tr>
-                            <td>Domaine</td>
+                            <td className="font-weight-bold">Domaine</td>
                             <td>{currentSalarie.domaine.titre}</td>
                           </tr>
                         </tbody>
@@ -204,7 +229,7 @@ export default class Salarie extends Component {
                     <CCardFooter>
                       <CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
                         <CButton active block color="info" aria-pressed="true"to={"/salaries/modification/" + currentSalarie.id}>
-                            Modifier
+                        <FontAwesomeIcon icon={["far", "edit"]} /> Modifier
                         </CButton>
                       </CCol>
                     </CCardFooter>
@@ -214,7 +239,7 @@ export default class Salarie extends Component {
                   <CRow>
                     <CCol lg={12}>
                       <CCard>
-                        <CCardHeader>Liste des formations</CCardHeader>
+                        <CCardHeader><h4><FontAwesomeIcon icon={["fas", "align-justify"]} /> Liste des formations</h4></CCardHeader>
                         <CCardBody>
                           <table className="table table-striped table-hover">
                             <thead>
@@ -257,7 +282,7 @@ export default class Salarie extends Component {
                   <CRow>
                     <CCol lg={12}>
                       <CCard>
-                        <CCardHeader>Liste des competences</CCardHeader>
+                        <CCardHeader><h4><FontAwesomeIcon icon={["fas", "list"]} /> Liste des competences</h4></CCardHeader>
                         <CCardBody>
                           <table className="table table-striped table-hover">
                             <thead>

@@ -8,6 +8,7 @@ import EntrepriseService from "../../services/entreprises.service";
 import CompetenceService from "../../services/competence.service";
 import RoleService from "../../services/role.service";
 import SalariesService from "../../services/salaries.service";
+import { isMajor,isValidDate } from "src/utils/fonctions";
 
 class UpdateSalarie extends Component {
   constructor(props) {
@@ -97,9 +98,8 @@ class UpdateSalarie extends Component {
   }
 
   handleChange(e) {
-    var pattern = new RegExp(
-      /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-    );
+    let regexEmail = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+    let regexTel = new RegExp("^0[1-9]([-. ]?[0-9]{2}){4}$");
     const target = e.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.name;
@@ -151,8 +151,8 @@ class UpdateSalarie extends Component {
       }
     }
 
-    // TODO: Vérifie si c'est un date et supérieur a 18 ans
-    if (name === "birthday") {
+
+    if (name === "birthday") { 
       if (value === "" || value === null || value.length === 0) {
         this.setState((prevState) => ({
           currentErrors: {
@@ -161,32 +161,42 @@ class UpdateSalarie extends Component {
             birthdayBool: true,
           },
         }));
-      } else {
-        this.setState((prevState) => ({
-          currentErrors: {
-            ...prevState.currentErrors,
-            birthday: null,
-            birthdayBool: true,
-          },
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            dateNaissance: value,
-          },
-        }));
+      }else{
+        if(isValidDate(value)){
+          if(!isMajor(value)){
+            this.setState((prevState) => ({
+              currentErrors: {
+                ...prevState.currentErrors,
+                birthday: "Le salarié est mineur.",
+                birthdayBool: true,
+              },
+            }));
+          }else{
+            this.setState((prevState) => ({
+              currentErrors: {
+                ...prevState.currentErrors,
+                birthday: null,
+                birthdayBool: true,
+              },
+              currentSalarie: {
+                ...prevState.currentSalarie,
+                dateNaissance: value,
+              },
+            }));
+          }
+        }else{
+          this.setState((prevState) => ({
+            currentErrors: {
+              ...prevState.currentErrors,
+              birthday: "Veuilez saisir une date.",
+              birthdayBool: true,
+            },
+          }));
+        }
       }
     }
-
-    // TODO: Vérifie si c'est un bon numéro
     if (name === "phonePerso") {
-      if (value === "" || value === null || value.length === 0) {
-        this.setState((prevState) => ({
-          currentErrors: {
-            ...prevState.currentErrors,
-            phonePerso: "Veuillez saisir un bon numéro",
-            phonePersoBool: true,
-          },
-        }));
-      } else {
+      if(regexTel.test(value)){
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -198,85 +208,91 @@ class UpdateSalarie extends Component {
             telPersonnel: value,
           },
         }));
+      }else{
+        this.setState((prevState) => ({
+          currentErrors: {
+            ...prevState.currentErrors,
+            phonePerso: "Veuillez saisir un bon numéro",
+            phonePersoBool: true,
+          },
+        }));
       }
-    }
+  }
 
-    // TODO: Vérifie si c'est un bon numéro
-    if (name === "phoneMPerso") {
-      if (value === "" || value === null || value.length === 0) {
-        this.setState((prevState) => ({
-          currentErrors: {
-            ...prevState.currentErrors,
-            phoneMPerso: "Veuillez saisir un bon numéro",
-            phoneMPersoBool: true,
-          },
-        }));
-      } else {
-        this.setState((prevState) => ({
-          currentErrors: {
-            ...prevState.currentErrors,
-            phoneMPerso: null,
-            phoneMPersoBool: false,
-          },
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            mobilPersonnel: value,
-          },
-        }));
-      }
+  if (name === "phoneMPerso") {
+    if(regexTel.test(value)){
+      this.setState((prevState) => ({
+        currentErrors: {
+          ...prevState.currentErrors,
+          phoneMPerso: null,
+          phoneMPersoBool: false,
+        },
+        currentSalarie: {
+          ...prevState.currentSalarie,
+          mobilPersonnel: value,
+        },
+      }));
+    }else{
+      this.setState((prevState) => ({
+        currentErrors: {
+          ...prevState.currentErrors,
+          phoneMPerso: "Veuillez saisir un bon numéro",
+          phoneMPersoBool: true,
+        },
+      }));
     }
-    // TODO: Vérifie si c'est un bon numéro
-    if (name === "phonePro") {
-      if (value === "" || value === null || value.length === 0) {
-        this.setState((prevState) => ({
-          currentErrors: {
-            ...prevState.currentErrors,
-            phonePro: "Veuillez saisir un bon numéro",
-            phoneProBool: true,
-          },
-        }));
-      } else {
-        this.setState((prevState) => ({
-          currentErrors: {
-            ...prevState.currentErrors,
-            phonePro: null,
-            phoneProBool: false,
-          },
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            telProfessionnel: value,
-          },
-        }));
-      }
-    }
+  }
 
-    // TODO: Vérifie si c'est un bon numéro
-    if (name === "phoneMPro") {
-      if (value !== "" || value !== null || value.length !== 0) {
-        this.setState((prevState) => ({
-          currentErrors: {
-            ...prevState.currentErrors,
-            phoneMPro: "Veuillez saisir un bon numéro",
-            phoneMProBool: true,
-          },
-        }));
-      } else {
-        this.setState((prevState) => ({
-          currentErrors: {
-            ...prevState.currentErrors,
-            phoneMPro: null,
-            phoneMProBool: false,
-          },
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            mobileProfessionnel: value,
-          },
-        }));
-      }
+  if (name === "phonePro") {
+    if(regexTel.test(value)){
+      this.setState((prevState) => ({
+        currentErrors: {
+          ...prevState.currentErrors,
+          phonePro: null,
+          phoneProBool: false,
+        },
+        currentSalarie: {
+          ...prevState.currentSalarie,
+          telProfessionnel: value,
+        },
+      }));
+    }else{
+      this.setState((prevState) => ({
+        currentErrors: {
+          ...prevState.currentErrors,
+          phonePro: "Veuillez saisir un bon numéro",
+          phoneProBool: true,
+        },
+      }));
     }
+  }
+
+  if (name === "phoneMPro") {
+    if(regexTel.test(value)){
+      this.setState((prevState) => ({
+        currentErrors: {
+          ...prevState.currentErrors,
+          phoneMPro: null,
+          phoneMProBool: false,
+        },
+        currentSalarie: {
+          ...prevState.currentSalarie,
+          mobileProfessionnel: value,
+        },
+      }));
+    }else{
+      this.setState((prevState) => ({
+        currentErrors: {
+          ...prevState.currentErrors,
+          phoneMPro: "Veuillez saisir un bon numéro",
+          phoneMProBool: true,
+        },
+      }));
+    }
+  }
 
     if (name === "email") {
-      if (!pattern.test(value)) {
+      if (!regexEmail.test(value)) {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
