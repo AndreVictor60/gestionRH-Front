@@ -38,7 +38,9 @@ const UpdateTitrePoste = React.lazy(() => import('./views/titre-poste/modificati
 const AllPoste = React.lazy(() => import('./views/poste/listPoste'));
 const CreatePoste = React.lazy(() => import('./views/poste/creation-poste'));
 const UpdatePoste = React.lazy(() => import('./views/poste/modification-poste'));
-
+const AllEntretien = React.lazy(() => import('./views/entretiens/allEntretiens'));
+const CreateEntretien = React.lazy(() => import('./views/entretiens/createEntretien'));
+const UpdateEntretien = React.lazy(() => import('./views/entretiens/updateEntretien'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home', component: Dashboard },
@@ -85,6 +87,10 @@ const routes = [
   { path: '/poste/liste',exact: true, name: 'Liste des postes', component: AllPoste },
   { path: '/poste/creation',exact: true, name: 'Création d\'un poste', component: CreatePoste },
   { path: '/poste/modification/:id',exact: true, name: 'Modifier un poste', component: UpdatePoste },
+  { path: '/entretiens', exact: true, name: 'Entretiens', component: AllEntretien },
+  { path: '/entretiens/liste', exact: true, name: 'Liste des entretiens', component: AllEntretien },
+  { path: '/entretiens/creation',exact: true, name: 'Creation d\'un entretien', component: CreateEntretien },
+  { path: '/entretiens/modification/:id',exact: true, name: 'Modifier un entretien', component: UpdateEntretien },
 ];
 
 export default routes;

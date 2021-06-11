@@ -7,7 +7,13 @@ class SalariesService {
   getAll() {
     return axios.get(API_URL + "/0/10", { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
+  getAllSalariesByPage(page,size){
+    return axios.get(API_URL + `/${page}/${size}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  }
 
+  getAllSalariesByFirstnamePerPage(page,size,name){
+    return axios.get(API_URL + `/${page}/${size}/${name}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  }
  /* findBySalarie() {
     return axios.get(API_URL, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }*/

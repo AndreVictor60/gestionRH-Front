@@ -190,6 +190,23 @@ const _nav =  [
         to: '/poste/creation',
       }
     ],
+  },{
+    _tag: 'CSidebarNavDropdown',
+    name: 'Entretien',
+    route: '/entretiens',
+    icon: 'cil-puzzle',
+    _children: [
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Liste des entretiens',
+        to: '/entretiens/liste',
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Création d\'un entretien',
+        to: '/entretiens/creation',
+      }
+    ],
   },
   {
     _tag: 'CSidebarNavDivider'

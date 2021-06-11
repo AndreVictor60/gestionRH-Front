@@ -1,4 +1,4 @@
-import { CButton, CSelect } from "@coreui/react";
+import { CButton, CSelect,CAlert } from "@coreui/react";
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import AdressesService from "../../services/adresses.service";
@@ -543,7 +543,7 @@ class CreateSalarie extends Component {
   }
 
   render() {
-    const { adresses, domains, companies, skills, roles, currentErrors } = this.state;
+    const { adresses, domains, companies, skills, roles, currentErrors,message,ifError } = this.state;
     return (
       <div className="submit-form">
         <div>
@@ -805,6 +805,7 @@ class CreateSalarie extends Component {
               Ajout d'un salarié
             </CButton>
           </form>
+          {ifError != null && <CAlert color={ifError ? "danger" : "success"}>{message}</CAlert>}
         </div>
       </div>
     );
