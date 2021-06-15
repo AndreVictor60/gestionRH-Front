@@ -201,7 +201,7 @@ class CreateEntretien extends Component {
   }
 
   async loadSalarie (search, prevOptions, { page },e) {
-    const response = await salariesService.getAllSalariesByFirstnamePerPage(page,10,this.state.nomSalarie);
+    const response = await salariesService.getAllSalariesByKeywordPerPage(page,10,this.state.nomSalarie);
     const responseJSON = await response.data;
     return {
         options: responseJSON,
@@ -213,7 +213,7 @@ class CreateEntretien extends Component {
   };
 
   async loadSalarieManager (search, prevOptions, { page },e) {
-    const response = await salariesService.getAllSalariesByFirstnamePerPage(page,10,this.state.nomManager);
+    const response = await salariesService.getAllSalariesByKeywordPerPage(page,10,this.state.nomManager);
     const responseJSON = await response.data;
     return {
         options: responseJSON,

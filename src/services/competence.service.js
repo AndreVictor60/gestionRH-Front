@@ -10,8 +10,15 @@ class CompetenceService {
   getAllComptenceByPage(page,size) {
     return axios.get(API_URL + `/${page}/${size}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
-  countCompetence() {
-    return axios.get(API_URL + `/count`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  getAllComptenceByPageAndKeyword(page,size,search) {
+    return axios.get(API_URL + `/${page}/${size}/${search}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  }
+  countCompetence(search) {
+    if(search === null || search === undefined){
+      return axios.get(API_URL + `/count`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+    }else{
+      return axios.get(API_URL + `/count/${search}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+    }
   }
   getCompetenceById(id) {
     return axios.get(API_URL + `/${id}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });

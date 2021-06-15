@@ -7,11 +7,14 @@ class TitrePosteService {
     getAllTitrePoste() {
     return axios.get(API_URL , { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
-  countTitrePoste() {
-    return axios.get(API_URL + `/count`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  countTitrePoste(search) {
+    return axios.get(API_URL + `/count/${search}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
   getAllTitrePosteByPage(page,size) {
     return axios.get(API_URL + `/${page}/${size}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  }
+  getAllTitrePosteByPageAndKeyword(page,size,search) {
+    return axios.get(API_URL + `/${page}/${size}/${search}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
   getTitrePosteById(id) {
     return axios.get(API_URL + `/${id}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });

@@ -8,6 +8,9 @@ import CompetenceService from "../../services/competence.service";
 import RoleService from "../../services/role.service";
 import SalariesService from "../../services/salaries.service";
 import Select from "react-select";
+import { isMajor,isValidDate } from "src/utils/fonctions";
+// eslint-disable-next-line no-unused-vars
+import moment from "moment";
 class CreateSalarie extends Component {
   constructor(props) {
     super(props);
@@ -86,7 +89,7 @@ class CreateSalarie extends Component {
         siManager: false,
       },
       message: "",
-      ifError: ""
+      ifError: null
     };
   }
 
@@ -99,9 +102,8 @@ class CreateSalarie extends Component {
   }
 
   handleChange(e) {
-    var pattern = new RegExp(
-      /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-    );
+    let regexEmail = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+    let regexTel = new RegExp("^0[1-9]([-. ]?[0-9]{2}){4}$");
     const target = e.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.name;
@@ -152,8 +154,7 @@ class CreateSalarie extends Component {
         }));
       }
     }
-    // TODO: Vérifie si c'est un date et supérieur a 18 ans
-    if (name === "birthday") {
+    if (name === "birthday") { 
       if (value === "" || value === null || value.length === 0) {
         this.setState((prevState) => ({
           currentErrors: {
@@ -163,54 +164,65 @@ class CreateSalarie extends Component {
           },
         }));
       }else{
-        this.setState((prevState) => ({
-          currentErrors: {
-            ...prevState.currentErrors,
-            birthday: null,
-            birthdayBool: true,
-          },
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            dateNaissance: value,
-          },
-        }));
+        if(isValidDate(value)){
+          if(!isMajor(value)){
+            this.setState((prevState) => ({
+              currentErrors: {
+                ...prevState.currentErrors,
+                birthday: "Le salarié est mineur.",
+                birthdayBool: true,
+              },
+            }));
+          }else{
+            this.setState((prevState) => ({
+              currentErrors: {
+                ...prevState.currentErrors,
+                birthday: null,
+                birthdayBool: true,
+              },
+              currentSalarie: {
+                ...prevState.currentSalarie,
+                dateNaissance: value,
+              },
+            }));
+          }
+        }else{
+          this.setState((prevState) => ({
+            currentErrors: {
+              ...prevState.currentErrors,
+              birthday: "Veuilez saisir une date.",
+              birthdayBool: true,
+            },
+          }));
+        }
       }
     }
-    // TODO: Vérifie si c'est un bon numéro
     if (name === "phonePerso") {
-      if (value === "" || value === null || value.length === 0) {
-        this.setState((prevState) => ({
-          currentErrors: {
-            ...prevState.currentErrors,
-            phonePerso: "Veuillez saisir un bon numéro",
-            phonePersoBool: true,
-          },
-        }));
-      }else{
-        this.setState((prevState) => ({
-          currentErrors: {
-            ...prevState.currentErrors,
-            phonePerso: null,
-            phonePersoBool: false,
-          },
-          currentSalarie: {
-            ...prevState.currentSalarie,
-            telPersonnel: value,
-          },
-        }));
-      }
+        if(regexTel.test(value)){
+          this.setState((prevState) => ({
+            currentErrors: {
+              ...prevState.currentErrors,
+              phonePerso: null,
+              phonePersoBool: false,
+            },
+            currentSalarie: {
+              ...prevState.currentSalarie,
+              telPersonnel: value,
+            },
+          }));
+        }else{
+          this.setState((prevState) => ({
+            currentErrors: {
+              ...prevState.currentErrors,
+              phonePerso: "Veuillez saisir un bon numéro",
+              phonePersoBool: true,
+            },
+          }));
+        }
     }
-    // TODO: Vérifie si c'est un bon numéro
+
     if (name === "phoneMPerso") {
-      if (value === "" || value === null || value.length === 0) {
-        this.setState((prevState) => ({
-          currentErrors: {
-            ...prevState.currentErrors,
-            phoneMPerso: "Veuillez saisir un bon numéro",
-            phoneMPersoBool: true,
-          },
-        }));
-      }else{
+      if(regexTel.test(value)){
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -222,19 +234,19 @@ class CreateSalarie extends Component {
             mobilPersonnel: value,
           },
         }));
-      }
-    }
-    // TODO: Vérifie si c'est un bon numéro
-    if (name === "phonePro") {
-      if (value === "" || value === null || value.length === 0) {
+      }else{
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
-            phonePro: "Veuillez saisir un bon numéro",
-            phoneProBool: true,
+            phoneMPerso: "Veuillez saisir un bon numéro",
+            phoneMPersoBool: true,
           },
         }));
-      }else{
+      }
+    }
+
+    if (name === "phonePro") {
+      if(regexTel.test(value)){
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -246,20 +258,19 @@ class CreateSalarie extends Component {
             telProfessionnel: value,
           },
         }));
-      }
-    }
-
-    // TODO: Vérifie si c'est un bon numéro
-    if (name === "phoneMPro") {
-      if (value !== "" || value !== null || value.length !== 0) {
+      }else{
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
-            phoneMPro: "Veuillez saisir un bon numéro",
-            phoneMProBool: true,
+            phonePro: "Veuillez saisir un bon numéro",
+            phoneProBool: true,
           },
-        }));  
-      }else{
+        }));
+      }
+    }
+
+    if (name === "phoneMPro") {
+      if(regexTel.test(value)){
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -271,9 +282,16 @@ class CreateSalarie extends Component {
             mobileProfessionnel: value,
           },
         }));
+      }else{
+        this.setState((prevState) => ({
+          currentErrors: {
+            ...prevState.currentErrors,
+            phoneMPro: "Veuillez saisir un bon numéro",
+            phoneMProBool: true,
+          },
+        }));
       }
     }
-    // todo: vérifie si le password match 
     if (name === "password") {
       if (value === "" || value === null || value.length === 0) {
         console.log(value.length,"le mot de passe est vide")
@@ -324,11 +342,11 @@ class CreateSalarie extends Component {
     }
 
     if (name === "email") {
-      if (!pattern.test(value)) {
+      if (!regexEmail.test(value)) {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
-            email: "Please enter valid email address.",
+            email: "Veuillez entrer une adresse e-mail valide.",
             emailBool: true,
           }
         }));
