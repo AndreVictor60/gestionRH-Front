@@ -48,7 +48,7 @@ class ListEntreprise extends Component {
 
   searchEntreprise(e) {
     e.preventDefault();
-    this.retrieveEntreprise();
+    this.setState({ currentPage: 0 },() => {this.retrieveEntreprise();});
   }
 
   handleChange(e) {
@@ -138,6 +138,7 @@ class ListEntreprise extends Component {
               breakClassName="page-item"
               nextClassName="page-item"
               previousClassName="page-item"
+              forcePage={this.state.currentPage}
             />
           </div>
         </div>

@@ -60,7 +60,7 @@ class ListDomaine extends Component {
 
   searchDomain(e) {
     e.preventDefault();
-    this.retrieveDomaine();
+    this.setState({ currentPage: 0 },() => {this.retrieveDomaine();});
   }
 
   ifdelete(domaine) {
@@ -192,6 +192,7 @@ class ListDomaine extends Component {
               breakClassName="page-item"
               nextClassName="page-item"
               previousClassName="page-item"
+              forcePage={this.state.currentPage}
             />
           </div>
         </div>

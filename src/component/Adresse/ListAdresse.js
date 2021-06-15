@@ -42,7 +42,7 @@ class ListAdresse extends Component {
 
   searchAddress(e) {
     e.preventDefault();
-    this.retrieveAdresses();
+    this.setState({ currentPage: 0 },() => {this.retrieveAdresses();});
   }
 
   handlePageClick = (data) => {
@@ -140,6 +140,7 @@ class ListAdresse extends Component {
               breakClassName="page-item"
               nextClassName="page-item"
               previousClassName="page-item"
+              forcePage={this.state.currentPage}
             />
           </div>
         </div>

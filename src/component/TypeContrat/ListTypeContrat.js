@@ -58,7 +58,9 @@ class ListTypeContrat extends Component {
 
   searchType(e) {
     e.preventDefault();
-    this.retrieveTypeContrat();
+    this.setState({ currentPage: 0 }, () => {
+      this.retrieveTypeContrat();
+    });
   }
 
   ifdelete(typecontrat) {
@@ -194,6 +196,7 @@ class ListTypeContrat extends Component {
               breakClassName="page-item"
               nextClassName="page-item"
               previousClassName="page-item"
+              forcePage={this.state.currentPage}
             />
           </div>
         </div>

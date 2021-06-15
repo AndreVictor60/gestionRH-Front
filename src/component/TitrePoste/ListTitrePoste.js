@@ -58,7 +58,9 @@ class ListTitrePoste extends Component {
 
   searchTitle(e) {
     e.preventDefault();
-    this.retrieveTitrePoste();
+    this.setState({ currentPage: 0 }, () => {
+      this.retrieveTitrePoste();
+    });
   }
 
   ifdelete(titrePoste) {
@@ -192,6 +194,7 @@ class ListTitrePoste extends Component {
               breakClassName="page-item"
               nextClassName="page-item"
               previousClassName="page-item"
+              forcePage={this.state.currentPage}
             />
           </div>
         </div>

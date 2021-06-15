@@ -54,7 +54,7 @@ class ListRole extends Component {
 
   searchRole(e) {
     e.preventDefault();
-    this.retrieveRole();
+    this.setState({ currentPage: 0 },() => {this.retrieveRole();});
   }
 
   ifdelete(role) {
@@ -186,6 +186,7 @@ class ListRole extends Component {
               breakClassName="page-item"
               nextClassName="page-item"
               previousClassName="page-item"
+              forcePage={this.state.currentPage}
             />
           </div>
         </div>

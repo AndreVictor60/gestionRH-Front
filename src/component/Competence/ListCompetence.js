@@ -31,6 +31,7 @@ class ListCompetence extends Component {
       .then((resp) => {
         let nbPage = Math.ceil(resp.data / this.state.itemsPerPage);
         this.setState({ pageCount: nbPage });
+        console.log(resp.data);
       })
       .catch((e) => {
         console.log(e);
@@ -60,7 +61,7 @@ class ListCompetence extends Component {
 
   searchCompetence(e) {
     e.preventDefault();
-    this.retrieveCompetence();
+    this.setState({ currentPage: 0 },() => {this.retrieveCompetence();});
   }
 
   ifdelete(competence) {
@@ -208,7 +209,8 @@ class ListCompetence extends Component {
               breakClassName="page-item"
               nextClassName="page-item"
               previousClassName="page-item"
-            />
+              forcePage={this.state.currentPage}
+              />
           </div>
         </div>
       </>

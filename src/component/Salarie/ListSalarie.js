@@ -53,7 +53,7 @@ class ListSalarie extends Component {
 
   searchEmployee(e) {
     e.preventDefault();
-    this.retrieveSalaries();
+    this.setState({ currentPage: 0 },() => {this.retrieveSalaries();});
   }
 
   handleChange(e) {
@@ -196,6 +196,7 @@ class ListSalarie extends Component {
               breakClassName="page-item"
               nextClassName="page-item"
               previousClassName="page-item"
+              forcePage={this.state.currentPage}
             />
           </div>
         </div>
