@@ -1,4 +1,4 @@
-import { CButton, CSelect,CAlert } from "@coreui/react";
+import { CButton, CSelect, CAlert } from "@coreui/react";
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import AdressesService from "../../services/adresses.service";
@@ -8,7 +8,7 @@ import CompetenceService from "../../services/competence.service";
 import RoleService from "../../services/role.service";
 import SalariesService from "../../services/salaries.service";
 import Select from "react-select";
-import { isMajor,isValidDate } from "src/utils/fonctions";
+import { isMajor, isValidDate } from "src/utils/fonctions";
 // eslint-disable-next-line no-unused-vars
 import moment from "moment";
 class CreateSalarie extends Component {
@@ -24,7 +24,7 @@ class CreateSalarie extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.saveEmployee = this.saveEmployee.bind(this);
     this.state = {
-      currentErrors:{
+      currentErrors: {
         lastname: null,
         lastnameBool: true,
         firstname: null,
@@ -154,7 +154,7 @@ class CreateSalarie extends Component {
         }));
       }
     }
-    if (name === "birthday") { 
+    if (name === "birthday") {
       if (value === "" || value === null || value.length === 0) {
         this.setState((prevState) => ({
           currentErrors: {
@@ -163,9 +163,9 @@ class CreateSalarie extends Component {
             birthdayBool: true,
           },
         }));
-      }else{
-        if(isValidDate(value)){
-          if(!isMajor(value)){
+      } else {
+        if (isValidDate(value)) {
+          if (!isMajor(value)) {
             this.setState((prevState) => ({
               currentErrors: {
                 ...prevState.currentErrors,
@@ -173,7 +173,7 @@ class CreateSalarie extends Component {
                 birthdayBool: true,
               },
             }));
-          }else{
+          } else {
             this.setState((prevState) => ({
               currentErrors: {
                 ...prevState.currentErrors,
@@ -186,7 +186,7 @@ class CreateSalarie extends Component {
               },
             }));
           }
-        }else{
+        } else {
           this.setState((prevState) => ({
             currentErrors: {
               ...prevState.currentErrors,
@@ -198,31 +198,31 @@ class CreateSalarie extends Component {
       }
     }
     if (name === "phonePerso") {
-        if(regexTel.test(value)){
-          this.setState((prevState) => ({
-            currentErrors: {
-              ...prevState.currentErrors,
-              phonePerso: null,
-              phonePersoBool: false,
-            },
-            currentSalarie: {
-              ...prevState.currentSalarie,
-              telPersonnel: value,
-            },
-          }));
-        }else{
-          this.setState((prevState) => ({
-            currentErrors: {
-              ...prevState.currentErrors,
-              phonePerso: "Veuillez saisir un bon numéro",
-              phonePersoBool: true,
-            },
-          }));
-        }
+      if (regexTel.test(value)) {
+        this.setState((prevState) => ({
+          currentErrors: {
+            ...prevState.currentErrors,
+            phonePerso: null,
+            phonePersoBool: false,
+          },
+          currentSalarie: {
+            ...prevState.currentSalarie,
+            telPersonnel: value,
+          },
+        }));
+      } else {
+        this.setState((prevState) => ({
+          currentErrors: {
+            ...prevState.currentErrors,
+            phonePerso: "Veuillez saisir un bon numéro",
+            phonePersoBool: true,
+          },
+        }));
+      }
     }
 
     if (name === "phoneMPerso") {
-      if(regexTel.test(value)){
+      if (regexTel.test(value)) {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -234,7 +234,7 @@ class CreateSalarie extends Component {
             mobilPersonnel: value,
           },
         }));
-      }else{
+      } else {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -246,7 +246,7 @@ class CreateSalarie extends Component {
     }
 
     if (name === "phonePro") {
-      if(regexTel.test(value)){
+      if (regexTel.test(value)) {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -258,7 +258,7 @@ class CreateSalarie extends Component {
             telProfessionnel: value,
           },
         }));
-      }else{
+      } else {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -270,7 +270,7 @@ class CreateSalarie extends Component {
     }
 
     if (name === "phoneMPro") {
-      if(regexTel.test(value)){
+      if (regexTel.test(value)) {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -282,7 +282,7 @@ class CreateSalarie extends Component {
             mobileProfessionnel: value,
           },
         }));
-      }else{
+      } else {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -294,7 +294,7 @@ class CreateSalarie extends Component {
     }
     if (name === "password") {
       if (value === "" || value === null || value.length === 0) {
-        console.log(value.length,"le mot de passe est vide")
+        console.log(value.length, "le mot de passe est vide")
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -302,16 +302,16 @@ class CreateSalarie extends Component {
             passwordBool: true,
           }
         }));
-        console.log(value,"le mot de passe n'est pas vide")
-      }else{
+        console.log(value, "le mot de passe n'est pas vide")
+      } else {
         this.setState((prevState) => ({
-           password: value,
-           currentErrors: {
-             ...prevState.currentErrors,
-             password: null,
-             passwordBool: false
-           }
-           }));
+          password: value,
+          currentErrors: {
+            ...prevState.currentErrors,
+            password: null,
+            passwordBool: false
+          }
+        }));
       }
     }
 
@@ -324,7 +324,7 @@ class CreateSalarie extends Component {
             passwordMatchBool: true,
           }
         }));
-      }else{
+      } else {
         if (value !== "" || value !== null || value.length !== 0) {
           this.setState((prevState) => ({
             currentErrors: {
@@ -350,7 +350,7 @@ class CreateSalarie extends Component {
             emailBool: true,
           }
         }));
-      }else{
+      } else {
         if (value === "" || value === null || value.length === 0) {
           this.setState((prevState) => ({
             currentErrors: {
@@ -359,7 +359,7 @@ class CreateSalarie extends Component {
               emailBool: true,
             }
           }));
-        }else{
+        } else {
           this.setState((prevState) => ({
             currentErrors: {
               ...prevState.currentErrors,
@@ -373,10 +373,9 @@ class CreateSalarie extends Component {
           }));
         }
       }
-      
+
     }
     if (name === "adresse") {
-      console.log(value,"address")
       if (parseInt(value) === 0 || value === "" || value === null || value.length === 0) {
         this.setState((prevState) => ({
           currentErrors: {
@@ -385,7 +384,7 @@ class CreateSalarie extends Component {
             adresseBool: true,
           }
         }));
-      }else{
+      } else {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -410,7 +409,7 @@ class CreateSalarie extends Component {
             domainBool: true,
           }
         }));
-      }else{
+      } else {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -435,7 +434,7 @@ class CreateSalarie extends Component {
             companyBool: true,
           }
         }));
-      }else{
+      } else {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -454,24 +453,24 @@ class CreateSalarie extends Component {
   }
 
   onChangeSkills(e) {
-      this.setState((prevState) => ({
-        currentErrors:{
-          ...prevState.currentErrors,
-          skill: null,
-          skillBool: false
-        },
-        currentSalarie: {
-          ...prevState.currentSalarie,
-          competences: e,
-        },
-      }));
+    this.setState((prevState) => ({
+      currentErrors: {
+        ...prevState.currentErrors,
+        skill: null,
+        skillBool: false
+      },
+      currentSalarie: {
+        ...prevState.currentSalarie,
+        competences: e,
+      },
+    }));
   }
 
   onChangeRoles(e) {
 
-    if(e.length === 0){
+    if (e.length === 0) {
       this.setState((prevState) => ({
-        currentErrors:{
+        currentErrors: {
           ...prevState.currentErrors,
           role: "Veuillez séléctionner au moins une rôle",
           roleBool: true
@@ -481,9 +480,9 @@ class CreateSalarie extends Component {
           roles: e,
         },
       }));
-    }else{
+    } else {
       this.setState((prevState) => ({
-        currentErrors:{
+        currentErrors: {
           ...prevState.currentErrors,
           role: null,
           roleBool: false
@@ -547,21 +546,58 @@ class CreateSalarie extends Component {
       });
   }
 
+  validationForm() {
+    const { currentErrors } = this.state;
+    if(!currentErrors.lastnameBool &&
+      !currentErrors.firstnameBool &&
+      !currentErrors.emailBool && 
+      !currentErrors.birthdayError &&
+      !currentErrors.passwordMatchBool &&
+      !currentErrors.passwordBool &&
+      !currentErrors.phonePersoBool &&
+      !currentErrors.phoneMPersoBool &&
+      !currentErrors.phoneProBool &&
+      !currentErrors.phoneMProBool &&
+      !currentErrors.adresseBool &&
+      !currentErrors.domainBool &&
+      !currentErrors.skillsBool &&
+      !currentErrors.roleBool  ){
+    return true;
+  }else{
+    return false;
+  }
+  }
+
   saveEmployee(e) {
     e.preventDefault();
-    const json = JSON.stringify(this.state.currentSalarie).split('"value":').join('"id":');
-    const data = JSON.parse(json);
-    SalariesService.save(data)
-      .then((resp) => {
-        console.log(resp);
-      })
-      .catch((e) => {
-        console.log(e);
+    if (this.validationForm()) {
+      const json = JSON.stringify(this.state.currentSalarie).split('"value":').join('"id":');
+      const data = JSON.parse(json);
+      SalariesService.save(data)
+        .then((resp) => {
+          this.setState({
+            message: "Création bien prise en compte ! Redirection vers son profil.",
+            ifError: false
+          });
+          window.setTimeout(() => {this.props.history.push(`/salaries/profil/${resp.data.id}`)}, 2500)
+        })
+        .catch((e) => {
+          this.setState({
+            message: e,
+            ifError: true
+          });
+          console.log(e);
+        });
+    } else {
+      this.setState({
+        message: "Des erreurs sont présentes ! veuillez ré-essayer.",
+        ifError: true
       });
+    }
   }
 
   render() {
-    const { adresses, domains, companies, skills, roles, currentErrors,message,ifError } = this.state;
+    const { adresses, domains, companies, skills, roles, currentErrors, message, ifError } = this.state;
     return (
       <div className="submit-form">
         <div>

@@ -8,7 +8,8 @@ import EntrepriseService from "../../services/entreprises.service";
 import CompetenceService from "../../services/competence.service";
 import RoleService from "../../services/role.service";
 import SalariesService from "../../services/salaries.service";
-import { isMajor,isValidDate } from "src/utils/fonctions";
+import { isMajor, isValidDate } from "src/utils/fonctions";
+import { Link } from "react-router-dom";
 
 class UpdateSalarie extends Component {
   constructor(props) {
@@ -152,7 +153,7 @@ class UpdateSalarie extends Component {
     }
 
 
-    if (name === "birthday") { 
+    if (name === "birthday") {
       if (value === "" || value === null || value.length === 0) {
         this.setState((prevState) => ({
           currentErrors: {
@@ -161,9 +162,9 @@ class UpdateSalarie extends Component {
             birthdayBool: true,
           },
         }));
-      }else{
-        if(isValidDate(value)){
-          if(!isMajor(value)){
+      } else {
+        if (isValidDate(value)) {
+          if (!isMajor(value)) {
             this.setState((prevState) => ({
               currentErrors: {
                 ...prevState.currentErrors,
@@ -171,7 +172,7 @@ class UpdateSalarie extends Component {
                 birthdayBool: true,
               },
             }));
-          }else{
+          } else {
             this.setState((prevState) => ({
               currentErrors: {
                 ...prevState.currentErrors,
@@ -184,7 +185,7 @@ class UpdateSalarie extends Component {
               },
             }));
           }
-        }else{
+        } else {
           this.setState((prevState) => ({
             currentErrors: {
               ...prevState.currentErrors,
@@ -196,7 +197,7 @@ class UpdateSalarie extends Component {
       }
     }
     if (name === "phonePerso") {
-      if(regexTel.test(value)){
+      if (regexTel.test(value)) {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -208,7 +209,7 @@ class UpdateSalarie extends Component {
             telPersonnel: value,
           },
         }));
-      }else{
+      } else {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -217,79 +218,79 @@ class UpdateSalarie extends Component {
           },
         }));
       }
-  }
-
-  if (name === "phoneMPerso") {
-    if(regexTel.test(value)){
-      this.setState((prevState) => ({
-        currentErrors: {
-          ...prevState.currentErrors,
-          phoneMPerso: null,
-          phoneMPersoBool: false,
-        },
-        currentSalarie: {
-          ...prevState.currentSalarie,
-          mobilPersonnel: value,
-        },
-      }));
-    }else{
-      this.setState((prevState) => ({
-        currentErrors: {
-          ...prevState.currentErrors,
-          phoneMPerso: "Veuillez saisir un bon numéro",
-          phoneMPersoBool: true,
-        },
-      }));
     }
-  }
 
-  if (name === "phonePro") {
-    if(regexTel.test(value)){
-      this.setState((prevState) => ({
-        currentErrors: {
-          ...prevState.currentErrors,
-          phonePro: null,
-          phoneProBool: false,
-        },
-        currentSalarie: {
-          ...prevState.currentSalarie,
-          telProfessionnel: value,
-        },
-      }));
-    }else{
-      this.setState((prevState) => ({
-        currentErrors: {
-          ...prevState.currentErrors,
-          phonePro: "Veuillez saisir un bon numéro",
-          phoneProBool: true,
-        },
-      }));
+    if (name === "phoneMPerso") {
+      if (regexTel.test(value)) {
+        this.setState((prevState) => ({
+          currentErrors: {
+            ...prevState.currentErrors,
+            phoneMPerso: null,
+            phoneMPersoBool: false,
+          },
+          currentSalarie: {
+            ...prevState.currentSalarie,
+            mobilPersonnel: value,
+          },
+        }));
+      } else {
+        this.setState((prevState) => ({
+          currentErrors: {
+            ...prevState.currentErrors,
+            phoneMPerso: "Veuillez saisir un bon numéro",
+            phoneMPersoBool: true,
+          },
+        }));
+      }
     }
-  }
 
-  if (name === "phoneMPro") {
-    if(regexTel.test(value)){
-      this.setState((prevState) => ({
-        currentErrors: {
-          ...prevState.currentErrors,
-          phoneMPro: null,
-          phoneMProBool: false,
-        },
-        currentSalarie: {
-          ...prevState.currentSalarie,
-          mobileProfessionnel: value,
-        },
-      }));
-    }else{
-      this.setState((prevState) => ({
-        currentErrors: {
-          ...prevState.currentErrors,
-          phoneMPro: "Veuillez saisir un bon numéro",
-          phoneMProBool: true,
-        },
-      }));
+    if (name === "phonePro") {
+      if (regexTel.test(value)) {
+        this.setState((prevState) => ({
+          currentErrors: {
+            ...prevState.currentErrors,
+            phonePro: null,
+            phoneProBool: false,
+          },
+          currentSalarie: {
+            ...prevState.currentSalarie,
+            telProfessionnel: value,
+          },
+        }));
+      } else {
+        this.setState((prevState) => ({
+          currentErrors: {
+            ...prevState.currentErrors,
+            phonePro: "Veuillez saisir un bon numéro",
+            phoneProBool: true,
+          },
+        }));
+      }
     }
-  }
+
+    if (name === "phoneMPro") {
+      if (regexTel.test(value)) {
+        this.setState((prevState) => ({
+          currentErrors: {
+            ...prevState.currentErrors,
+            phoneMPro: null,
+            phoneMProBool: false,
+          },
+          currentSalarie: {
+            ...prevState.currentSalarie,
+            mobileProfessionnel: value,
+          },
+        }));
+      } else {
+        this.setState((prevState) => ({
+          currentErrors: {
+            ...prevState.currentErrors,
+            phoneMPro: "Veuillez saisir un bon numéro",
+            phoneMProBool: true,
+          },
+        }));
+      }
+    }
 
     if (name === "email") {
       if (!regexEmail.test(value)) {
@@ -564,12 +565,13 @@ class UpdateSalarie extends Component {
 
   updateSalarie(e) {
     e.preventDefault();
-    const json = JSON.stringify(this.state.currentSalarie)
-      .split('"value":')
-      .join('"id":');
-    const data = JSON.parse(json);
-    delete data.postes;
+
     if (this.validationForm()) {
+      const json = JSON.stringify(this.state.currentSalarie)
+        .split('"value":')
+        .join('"id":');
+      const data = JSON.parse(json);
+      delete data.postes;
       SalariesService.updateWithoutPassword(data)
         .then((resp) => {
           this.setState({
@@ -897,6 +899,11 @@ class UpdateSalarie extends Component {
             <CButton type="submit" block color="info">
               Modification du salarié
             </CButton>
+            <Link to={{pathname: "/salaries/updatePassword", state: currentSalarie}}>
+              <CButton type="button" block color="info">
+                Modifier le mot de passe
+              </CButton>
+            </Link>
           </form>
           {ifError != null && (
             <CAlert color={ifError ? "danger" : "success"}>{message}</CAlert>

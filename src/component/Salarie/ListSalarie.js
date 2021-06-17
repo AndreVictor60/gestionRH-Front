@@ -134,10 +134,8 @@ class ListSalarie extends Component {
                     <td>
                       {salarie.postes.length !== 0 ?
                         compareDateStringWithDateCurrent(salarie.postes[0].dateFin) || salarie.postes[0].dateFin === null ?
-                          salarie.postes[0].manager === null ? salarie.postes[0].manager.nom + " " + salarie.postes[0].manager.prenom :
-                            salarie.postes[0].manager.nom + " " + salarie.postes[0].manager.prenom :
-                          "" :
-                        ""
+                          salarie.postes[0].manager === null ? "" :
+                            salarie.postes[0].manager.nom + " " + salarie.postes[0].manager.prenom : "" : ""
                       }
                     </td>
                     <td>

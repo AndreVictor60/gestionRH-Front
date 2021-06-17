@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router";
 import SalariesService from "../../services/salaries.service";
 import {
   CButton,
@@ -12,11 +13,11 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 
-export default class Salarie extends Component {
+class Salarie extends Component {
   _isMounted = false;
   constructor(props) {
     super(props);
-    
+    this.changeProfil = this.changeProfil.bind(this);
     this.state = {
       currentSalarie: {
         nom: "",
@@ -57,7 +58,7 @@ export default class Salarie extends Component {
 
   componentDidUpdate(){
     this._isMounted = true;
-    this.getSalarie(this.props.salarieId.id);
+    //this.getSalarie(this.props.salarieId.id);
   }
 
   componentWillUnmount(){
@@ -76,6 +77,12 @@ export default class Salarie extends Component {
       .catch((e) => {
         console.log(e);
       });
+  }
+
+  changeProfil(e){
+    const target = e.target;
+    this.props.history.push(`${target.pathname}`);
+    this.getSalarie(parseInt(target.id));
   }
 
   render() {
@@ -158,7 +165,7 @@ export default class Salarie extends Component {
                                     if(value.manager !== null){
                                     return (
                                       <div key={value.id}>
-                                        <Link to={"/salaries/profil/" + value.manager.id}>{value.manager.prenom +
+                                        <Link id={value.manager.id} to={ "/salaries/profil/" + value.manager.id} onClick={this.changeProfil}>{value.manager.prenom +
                                           " " +
                                           value.manager.nom}
                                           </Link>
@@ -313,3 +320,5 @@ export default class Salarie extends Component {
     );
   }
 }
+
+export default withRouter(Salarie);

@@ -174,7 +174,6 @@ class CreateEntretien extends Component {
 
   validationForm(){
     const {salarie,managerEntretien} = this.state.currentInterview;
-    console.log()
     if(Object.keys(managerEntretien).length !== 0 && Object.keys(salarie).length !== 0){
       if(managerEntretien.id !== salarie.id ){
         return true;

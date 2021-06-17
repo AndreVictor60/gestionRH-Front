@@ -52,7 +52,6 @@ export function isValidDate(value) {
  */
 export function isMajor(value){
   const years = moment().diff(value, 'years',false);
-  console.log("age",years)
   if(years >= 18){
     return true;
   }else{
