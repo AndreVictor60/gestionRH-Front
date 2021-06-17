@@ -7,8 +7,8 @@ class EntretienService {
     getAllEntretiens() {
     return axios.get(API_URL , { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
-  getAllEntretiensByPage(page,size) {
-    return axios.get(API_URL + `/${page}/${size}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  getAllEntretiensByPage(page,size,idSalarie,idManager) {
+    return axios.get(API_URL + `/${page}/${size}`, { params: {idSalarie:idSalarie,idManager:idManager}, headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   }
   getEntretienById(id) {
     return axios.get(API_URL + `/${id}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
@@ -19,8 +19,8 @@ class EntretienService {
   getEntretienBySalarie(idSalarie) {
     return axios.get(API_URL + `/salarie/${idSalarie}`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   } 
-  count() {
-    return axios.get(API_URL + `/count`, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+  count(idSalarie,idManager) {
+    return axios.get(API_URL + `/count`, { params: {idSalarie:idSalarie,idManager:idManager}, headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
   } 
   save(data) {
     return axios.post(API_URL, data, { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });

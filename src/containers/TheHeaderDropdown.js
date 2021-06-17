@@ -8,6 +8,8 @@ import {
 import CIcon from '@coreui/icons-react'
 import AuthService from "../services/auth.service";
 import { withRouter} from 'react-router-dom';
+import { Link } from "react-router-dom";
+import jwt_decode from 'jwt-decode';
 
 class TheHeaderDropdown extends Component {
   
@@ -18,8 +20,14 @@ class TheHeaderDropdown extends Component {
       username: "",
       password: "",
       loading: false,
-      message: ""
+      message: "",
+      user: {}
     };
+  }
+
+  componentDidMount(){
+    const token = JSON.parse(localStorage.getItem('token'));
+    this.setState({user:jwt_decode(token)})
   }
 
   logOutClick () {
@@ -28,7 +36,8 @@ class TheHeaderDropdown extends Component {
   }
   
   render() {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const { user } = this.state;
+    console.log("user",user);
     return (
       <CDropdown
       inNav
@@ -37,7 +46,7 @@ class TheHeaderDropdown extends Component {
     >
       <CDropdownToggle className="c-header-nav-link" caret={false}>
         <div>
-          <p>{user}</p>
+          <p>{user.email}</p>
         </div>
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
@@ -50,7 +59,7 @@ class TheHeaderDropdown extends Component {
           <strong>Settings</strong>
         </CDropdownItem>
         <CDropdownItem>
-          <CIcon name="cil-user" className="mfe-2" />Profile
+          <Link to={`/salaries/profil/${user.id}`}><CIcon name="cil-user" className="mfe-2" />Profile</Link>
         </CDropdownItem>
         <CDropdownItem>
           <CIcon name="cil-settings" className="mfe-2" />
@@ -68,8 +77,3 @@ class TheHeaderDropdown extends Component {
 }
 
 export default withRouter(TheHeaderDropdown)
-/**
- * TODO
- * 
- * mettre un lien deconnexion avec redirect vers la page Login
- */

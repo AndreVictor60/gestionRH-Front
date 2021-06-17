@@ -12,8 +12,8 @@ class FormationService {
         return axios.get(API_URL + `/${id}` , { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
     }
 
-    getFormationPeriodByPage(page,size,dateDebut,dateFin){
-        return axios.get(API_URL + `/period/${page}/${size}`, {params: {firstDate: dateDebut,lastDate: dateFin},headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+    getFormationPeriodByPage(page,size,search,dateDebut,dateFin){
+        return axios.get(API_URL + `/period/${page}/${size}`, {params: {firstDate: dateDebut,lastDate: dateFin, search: search},headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
     }
 
     getAllFormationEnCours(page,size) {
@@ -40,8 +40,8 @@ class FormationService {
         return axios.get(API_URL + `/${idFormation}/salaries` , { headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
     }
 
-    countFormation(dateDebut,dateFin) {
-        return axios.get(API_URL + `/count`, { params: {firstDate: dateDebut,lastDate: dateFin}, headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
+    countFormation(search,dateDebut,dateFin) {
+        return axios.get(API_URL + `/count`, { params: {firstDate: dateDebut,lastDate: dateFin,search: search}, headers: { Authorization : authHeader(),"Access-Control-Allow-Origin": "*" } });
     }
 
     save(data) {

@@ -71,6 +71,7 @@ class ListSalarie extends Component {
 
   render() {
     const { salaries } = this.state;
+    console.log(salaries)
     return (
       <>
         <div className="row justify-content-between mt-4">
@@ -118,25 +119,21 @@ class ListSalarie extends Component {
                     <td>{salarie.nom + " " + salarie.prenom}</td>
                     <td>
                       {salarie.postes.length !== 0
-                        ? compareDateStringWithDateCurrent(
-                          salarie.postes[0].dateFin
-                        )
-                          ? salarie.postes[0].typeContrat.type
-                          : ""
+                        ? compareDateStringWithDateCurrent(salarie.postes[0].dateFin) || salarie.postes[0].dateFin === null ? salarie.postes[0].typeContrat.type: ""
                         : ""}
                     </td>
                     <td>
                       {salarie.postes.length !== 0
                         ? compareDateStringWithDateCurrent(
                           salarie.postes[0].dateFin
-                        )
+                        ) || salarie.postes[0].dateFin === null
                           ? salarie.postes[0].titrePoste.intitule
                           : ""
                         : ""}
                     </td>
                     <td>
                       {salarie.postes.length !== 0 ?
-                        compareDateStringWithDateCurrent(salarie.postes[0].dateFin) ?
+                        compareDateStringWithDateCurrent(salarie.postes[0].dateFin) || salarie.postes[0].dateFin === null ?
                           salarie.postes[0].manager === null ? salarie.postes[0].manager.nom + " " + salarie.postes[0].manager.prenom :
                             salarie.postes[0].manager.nom + " " + salarie.postes[0].manager.prenom :
                           "" :
@@ -147,7 +144,7 @@ class ListSalarie extends Component {
                       {salarie.postes.length !== 0
                         ? compareDateStringWithDateCurrent(
                           salarie.postes[0].dateFin
-                        )
+                        ) || salarie.postes[0].dateFin === null
                           ? salarie.postes[salarie.postes.length - 1]
                             .lieuTravail.nom
                           : ""

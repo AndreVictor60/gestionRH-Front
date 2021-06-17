@@ -11,8 +11,6 @@ class AuthService {
         console.log("response",response.data)
         if (response.data.token) {
           localStorage.setItem("token", JSON.stringify(response.data.token));
-          localStorage.setItem("salarie", JSON.stringify(response.data.email));
-          localStorage.setItem("user", JSON.stringify(response.data.email));
         }
 
         return response.data;
@@ -21,8 +19,6 @@ class AuthService {
 
   logout() {
     localStorage.removeItem("user");
-    localStorage.removeItem("salarie");
-    localStorage.removeItem("token");
   }
 
 }
