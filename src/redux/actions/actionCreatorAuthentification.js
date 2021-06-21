@@ -6,6 +6,7 @@ import {
   } from "../actionTypes";
   
   import AuthService from "../../services/auth.service";
+  import jwt_decode from 'jwt-decode';
   
   
   export const login = (email, password) => (dispatch) => {
@@ -13,7 +14,7 @@ import {
       (data) => {
         dispatch({
           type: LOGIN_SUCCESS,
-          payload: { user: data },
+          payload: { user: jwt_decode(data.token) },
         });
   
         return Promise.resolve();

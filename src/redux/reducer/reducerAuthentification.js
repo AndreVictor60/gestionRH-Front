@@ -4,12 +4,12 @@ import {
     LOGOUT,
   } from "../actionTypes";
   
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("token"));
   
   const initialState = user
     ? { isLoggedIn: true, user }
     : { isLoggedIn: false, user: null };
-  
+
   export default function reducerAuthentification (state = initialState, action) {
     const { type, payload } = action;
   

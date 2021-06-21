@@ -37,7 +37,6 @@ class TheHeaderDropdown extends Component {
   
   render() {
     const { user } = this.state;
-    console.log("user",user);
     return (
       <CDropdown
       inNav

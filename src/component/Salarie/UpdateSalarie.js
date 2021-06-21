@@ -112,6 +112,10 @@ class UpdateSalarie extends Component {
             lastname: "Le champ nom est requis.",
             lastnameBool: true,
           },
+          currentSalarie: {
+            ...prevState.currentSalarie,
+            nom: value.toUpperCase(),
+          },
         }));
       } else {
         this.setState((prevState) => ({
@@ -122,7 +126,7 @@ class UpdateSalarie extends Component {
           },
           currentSalarie: {
             ...prevState.currentSalarie,
-            nom: value,
+            nom: value.toUpperCase(),
           },
         }));
       }
@@ -136,6 +140,10 @@ class UpdateSalarie extends Component {
             firstname: "Le champ prénom est requis.",
             firstnameBool: true,
           },
+          currentSalarie: {
+            ...prevState.currentSalarie,
+            prenom: (value+'').charAt(0).toUpperCase()+value.substr(1),
+          },
         }));
       } else {
         this.setState((prevState) => ({
@@ -146,7 +154,7 @@ class UpdateSalarie extends Component {
           },
           currentSalarie: {
             ...prevState.currentSalarie,
-            prenom: value,
+            prenom: (value+'').charAt(0).toUpperCase()+value.substr(1),
           },
         }));
       }
@@ -616,11 +624,11 @@ class UpdateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="lastname">Nom *</label>
+                  <label htmlFor="lastname" className={currentErrors.lastname ? "font-weight-bold text-danger" : "font-weight-bold"}>Nom *</label>
                   <input
                     type="text"
                     name="lastname"
-                    className="form-control"
+                    className={currentErrors.lastname ? "form-control is-invalid" : "form-control"}
                     id="lastname"
                     onChange={this.handleChange}
                     value={
@@ -633,11 +641,11 @@ class UpdateSalarie extends Component {
               </div>
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="firstname">Prénom *</label>
+                  <label htmlFor="firstname" className={currentErrors.firstname ? "font-weight-bold text-danger" : "font-weight-bold"}>Prénom *</label>
                   <input
                     type="text"
                     name="firstname"
-                    className="form-control"
+                    className={currentErrors.firstname ? "form-control is-invalid" : "form-control"}
                     id="firstname"
                     onChange={this.handleChange}
                     value={
@@ -654,11 +662,11 @@ class UpdateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="email">Email *</label>
+                  <label htmlFor="email" className={currentErrors.email ? "font-weight-bold text-danger" : "font-weight-bold"}>Email *</label>
                   <input
                     type="email"
                     name="email"
-                    className="form-control"
+                    className={currentErrors.email ? "form-control is-invalid" : "form-control"}
                     id="email"
                     onChange={this.handleChange}
                     value={
@@ -671,11 +679,11 @@ class UpdateSalarie extends Component {
               </div>
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="dayOfBirth">Date de naissance *</label>
+                  <label htmlFor="dayOfBirth" className={currentErrors.birthday ? "font-weight-bold text-danger" : "font-weight-bold"}>Date de naissance *</label>
                   <input
                     type="date"
                     name="birthday"
-                    className="form-control"
+                    className={currentErrors.birthday ? "form-control is-invalid" : "form-control"}
                     id="dayOfBirth"
                     onChange={this.handleChange}
                     value={
@@ -692,11 +700,11 @@ class UpdateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="phonePerso">Tél. perso</label>
+                  <label htmlFor="phonePerso" className={currentErrors.phonePerso ? "font-weight-bold text-danger" : "font-weight-bold"}>Tél. perso</label>
                   <input
                     type="text"
                     name="phonePerso"
-                    className="form-control"
+                    className={currentErrors.phonePerso ? "form-control is-invalid" : "form-control"}
                     id="phonePerso"
                     value={
                       currentSalarie.telPersonnel === null
@@ -712,11 +720,11 @@ class UpdateSalarie extends Component {
               </div>
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="phoneMPerso">Tél. Mobile perso</label>
+                  <label htmlFor="phoneMPerso" className={currentErrors.phoneMPerso ? "font-weight-bold text-danger" : "font-weight-bold"}>Tél. Mobile perso</label>
                   <input
                     type="text"
                     name="phoneMPerso"
-                    className="form-control"
+                    className={currentErrors.phoneMPerso ? "form-control is-invalid" : "form-control"}
                     id="phoneMPerso"
                     value={
                       currentSalarie.mobilPersonnel === null
@@ -734,11 +742,11 @@ class UpdateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="phonePro">Tél. pro</label>
+                  <label htmlFor="phonePro" className={currentErrors.phonePro ? "font-weight-bold text-danger" : "font-weight-bold"}>Tél. pro</label>
                   <input
                     type="text"
                     name="phonePro"
-                    className="form-control"
+                    className={currentErrors.phonePro ? "form-control is-invalid" : "form-control"}
                     id="phonePro"
                     value={
                       currentSalarie.telProfessionnel === null
@@ -769,6 +777,7 @@ class UpdateSalarie extends Component {
                 </div>
               </div>
             </div>
+
             <div className="row">
               <div className="col">
                 <div className="form-group">
@@ -899,11 +908,7 @@ class UpdateSalarie extends Component {
             <CButton type="submit" block color="info">
               Modification du salarié
             </CButton>
-            <Link to={{pathname: "/salaries/updatePassword", state: currentSalarie}}>
-              <CButton type="button" block color="info">
-                Modifier le mot de passe
-              </CButton>
-            </Link>
+
           </form>
           {ifError != null && (
             <CAlert color={ifError ? "danger" : "success"}>{message}</CAlert>

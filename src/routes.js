@@ -45,14 +45,14 @@ const AllSalariesTest = React.lazy(() => import('./views/salaries/listSalarieTes
 const UpdatePassword = React.lazy(() => import('./views/salaries/updatePassword'));
 
 const routes = [
-  { path: '/', exact: true, name: 'Home', component: Dashboard },
-  { path: '/dashboard', name: 'Dashboard', component: Dashboard },
-  { path: '/users', exact: true,  name: 'Users', component: Users },
-  { path: '/users/:id', exact: true, name: 'User Details', component: User },
-  { path: '/salaries', exact: true, name: 'Salaries', component: AllSalaries },
-  { path: '/salaries/liste', name: 'Listes des salaries', component: AllSalaries },
-  { path: '/salaries/listetest', name: 'Listes des salaries test', component: AllSalariesTest },
-  { path: '/salaries/creation', name: 'Ajout dun salarie', component: AddSalarie },
+  { path: '/', exact: true, name: 'Home',role:'ADMIN', component: Dashboard },
+  { path: '/dashboard', name: 'Dashboard',role:'ADMIN', component: Dashboard },
+  { path: '/users', exact: true,  name: 'Users',role:'ADMIN', component: Users },
+  { path: '/users/:id', exact: true, name: 'User Details',role:'ADMIN', component: User },
+  { path: '/salaries', exact: true, name: 'Salaries',role:'ADMIN', component: AllSalaries },
+  { path: '/salaries/liste', name: 'Listes des salaries',role:'ADMIN', component: AllSalaries },
+  { path: '/salaries/listetest', name: 'Listes des salaries test',role:'ADMIN', component: AllSalariesTest },
+  { path: '/salaries/creation', name: 'Ajout dun salarie',role:'ADMIN', component: AddSalarie },
   { path: '/salaries/profil/:id', exact: true, name: 'Profil', component: ProfilSalarie },
   { path: '/salaries/modification/:id', exact: true, name: 'Modification d\'un salarié', component: UpdateSalarie },
   { path: '/salaries/updatePassword', exact: true, name: 'Modification du mot de passe', component: UpdatePassword },

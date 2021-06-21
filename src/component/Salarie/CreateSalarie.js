@@ -9,8 +9,6 @@ import RoleService from "../../services/role.service";
 import SalariesService from "../../services/salaries.service";
 import Select from "react-select";
 import { isMajor, isValidDate } from "src/utils/fonctions";
-// eslint-disable-next-line no-unused-vars
-import moment from "moment";
 class CreateSalarie extends Component {
   constructor(props) {
     super(props);
@@ -32,25 +30,25 @@ class CreateSalarie extends Component {
         email: null,
         emailBool: true,
         birthday: null,
-        birthdayError: true,
+        birthdayBool: true,
         password: null,
-        passwordMatch: null,
-        passwordMatchBool: true,
+        passwordMatch: true,
+        passwordMatchBool: null,
         passwordBool: true,
         phonePerso: null,
-        phonePersoBool: true,
+        phonePersoBool: null,
         phoneMPerso: null,
-        phoneMPersoBool: true,
+        phoneMPersoBool: null,
         phonePro: null,
-        phoneProBool: true,
+        phoneProBool: null,
         phoneMPro: null,
-        phoneMProBool: true,
+        phoneMProBool: null,
         adresse: null,
         adresseBool: true,
         domain: null,
         domainBool: true,
         company: null,
-        companyBool: null,
+        companyBool: true,
         skills: null,
         skillsBool: true,
         role: null,
@@ -69,7 +67,7 @@ class CreateSalarie extends Component {
         nom: null,
         prenom: null,
         email: null,
-        dateNaissance: null,
+        dateNaissance: new Date(),
         motDePasse: null,
         telPersonnel: null,
         mobilPersonnel: null,
@@ -115,17 +113,21 @@ class CreateSalarie extends Component {
             lastname: "Le champ nom est requis.",
             lastnameBool: true,
           },
+          currentSalarie: {
+            ...prevState.currentSalarie,
+            nom: value.toUpperCase(),
+          },
         }));
       } else {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
-            lastname: null,
+            lastname: "",
             lastnameBool: false
           },
           currentSalarie: {
             ...prevState.currentSalarie,
-            nom: value,
+            nom: value.toUpperCase(),
           },
         }));
       }
@@ -138,18 +140,21 @@ class CreateSalarie extends Component {
             ...prevState.currentErrors,
             firstname: "Le champ prénom est requis.",
             firstnameBool: true,
+          },currentSalarie: {
+            ...prevState.currentSalarie,
+            prenom: (value+'').charAt(0).toUpperCase()+value.substr(1),
           },
         }));
       } else {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
-            firstname: null,
+            firstname: "",
             firstnameBool: false,
           },
           currentSalarie: {
             ...prevState.currentSalarie,
-            prenom: value,
+            prenom: (value+'').charAt(0).toUpperCase()+value.substr(1),
           },
         }));
       }
@@ -178,7 +183,7 @@ class CreateSalarie extends Component {
               currentErrors: {
                 ...prevState.currentErrors,
                 birthday: null,
-                birthdayBool: true,
+                birthdayBool: false,
               },
               currentSalarie: {
                 ...prevState.currentSalarie,
@@ -456,8 +461,8 @@ class CreateSalarie extends Component {
     this.setState((prevState) => ({
       currentErrors: {
         ...prevState.currentErrors,
-        skill: null,
-        skillBool: false
+        skills: null,
+        skillsBool: false
       },
       currentSalarie: {
         ...prevState.currentSalarie,
@@ -467,7 +472,6 @@ class CreateSalarie extends Component {
   }
 
   onChangeRoles(e) {
-
     if (e.length === 0) {
       this.setState((prevState) => ({
         currentErrors: {
@@ -554,22 +558,19 @@ class CreateSalarie extends Component {
       !currentErrors.birthdayError &&
       !currentErrors.passwordMatchBool &&
       !currentErrors.passwordBool &&
-      !currentErrors.phonePersoBool &&
-      !currentErrors.phoneMPersoBool &&
-      !currentErrors.phoneProBool &&
-      !currentErrors.phoneMProBool &&
       !currentErrors.adresseBool &&
       !currentErrors.domainBool &&
       !currentErrors.skillsBool &&
       !currentErrors.roleBool  ){
-    return true;
-  }else{
-    return false;
-  }
+      return true;
+    }else{
+      return false;
+    }
   }
 
   saveEmployee(e) {
     e.preventDefault();
+    console.log("validate",this.validationForm())
     if (this.validationForm()) {
       const json = JSON.stringify(this.state.currentSalarie).split('"value":').join('"id":');
       const data = JSON.parse(json);
@@ -597,7 +598,7 @@ class CreateSalarie extends Component {
   }
 
   render() {
-    const { adresses, domains, companies, skills, roles, currentErrors, message, ifError } = this.state;
+    const { adresses, domains, companies, skills, roles, currentErrors, message, ifError,currentSalarie } = this.state;
     return (
       <div className="submit-form">
         <div>
@@ -605,26 +606,28 @@ class CreateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="lastname">Nom *</label>
+                  <label htmlFor="lastname" className={currentErrors.lastname ? "font-weight-bold text-danger" : "font-weight-bold"}>Nom *</label>
                   <input
                     type="text"
                     name="lastname"
-                    className="form-control"
+                    className={currentErrors.lastname ? "form-control is-invalid" : "form-control"}
                     id="lastname"
                     onChange={this.handleChange}
+                    value={currentSalarie.nom}
                     required
                   />
-                  <span className="text-danger">{currentErrors.lastname}</span>
+                  <span className="text-danger" >{currentErrors.lastname}</span>
                 </div>
               </div>
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="firstname">Prénom *</label>
+                  <label htmlFor="firstname" className={currentErrors.firstname ? "font-weight-bold text-danger" : "font-weight-bold"}>Prénom *</label>
                   <input
                     type="text"
                     name="firstname"
-                    className="form-control"
+                    className={currentErrors.firstname ? "form-control is-invalid" : "form-control"}
                     id="firstname"
+                    value={currentSalarie.prenom}
                     onChange={this.handleChange}
                     required
                   />
@@ -635,11 +638,11 @@ class CreateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="email">Email *</label>
+                  <label htmlFor="email" className={currentErrors.email ? "font-weight-bold text-danger" : "font-weight-bold"}>Email *</label>
                   <input
                     type="email"
                     name="email"
-                    className="form-control"
+                    className={currentErrors.email ? "form-control is-invalid" : "form-control"}
                     id="email"
                     onChange={this.handleChange}
                     required
@@ -649,12 +652,13 @@ class CreateSalarie extends Component {
               </div>
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="dayOfBirth">Date de naissance *</label>
+                  <label htmlFor="dayOfBirth" className={currentErrors.birthday ? "font-weight-bold text-danger" : "font-weight-bold"} >Date de naissance *</label>
                   <input
                     type="date"
                     name="birthday"
-                    className="form-control"
+                    className={currentErrors.birthday ? "form-control is-invalid" : "form-control"}
                     id="dayOfBirth"
+                    value={currentSalarie.dateNaissance}
                     onChange={this.handleChange}
                     required
                   />
@@ -665,11 +669,11 @@ class CreateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="password">Mot de passe *</label>
+                  <label htmlFor="password" className={currentErrors.password ? "font-weight-bold text-danger" : "font-weight-bold"}>Mot de passe *</label>
                   <input
                     type="password"
                     name="password"
-                    className="form-control"
+                    className={currentErrors.password ? "form-control is-invalid" : "form-control"}
                     id="password"
                     onChange={this.handleChange}
                     required
@@ -679,13 +683,13 @@ class CreateSalarie extends Component {
               </div>
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="passwordC">
+                  <label htmlFor="passwordC" className={currentErrors.passwordMatch ? "font-weight-bold text-danger" : "font-weight-bold"}>
                     Confirmation du mot de passe *
                   </label>
                   <input
                     type="password"
                     name="passwordC"
-                    className="form-control"
+                    className={currentErrors.passwordMatch ? "form-control is-invalid" : "form-control"}
                     id="passwordC"
                     onChange={this.handleChange}
                     required
@@ -697,11 +701,11 @@ class CreateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="phonePerso">Tél. perso</label>
+                  <label htmlFor="phonePerso" className={currentErrors.phonePerso ? "font-weight-bold text-danger" : "font-weight-bold"}>Tél. perso</label>
                   <input
                     type="text"
                     name="phonePerso"
-                    className="form-control"
+                    className={currentErrors.phonePerso ? "form-control is-invalid" : "form-control"}
                     id="phonePerso"
                     onChange={this.handleChange}
                   />
@@ -710,11 +714,11 @@ class CreateSalarie extends Component {
               </div>
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="phoneMPerso">Tél. Mobile perso</label>
+                  <label htmlFor="phoneMPerso" className={currentErrors.phoneMPerso ? "font-weight-bold text-danger" : "font-weight-bold"}>Tél. Mobile perso</label>
                   <input
                     type="text"
                     name="phoneMPerso"
-                    className="form-control"
+                    className={currentErrors.phoneMPerso ? "form-control is-invalid" : "form-control"}
                     id="phoneMPerso"
                     onChange={this.handleChange}
                   />
@@ -725,11 +729,11 @@ class CreateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="phonePro">Tél. pro</label>
+                  <label htmlFor="phonePro" className={currentErrors.phonePro ? "font-weight-bold text-danger" : "font-weight-bold"}>Tél. pro</label>
                   <input
                     type="text"
                     name="phonePro"
-                    className="form-control"
+                    className={currentErrors.phonePro ? "form-control is-invalid" : "form-control"}
                     id="phonePro"
                     onChange={this.handleChange}
                   />
@@ -738,11 +742,11 @@ class CreateSalarie extends Component {
               </div>
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="phoneMPro">Tél. Mobile pro</label>
+                  <label htmlFor="phoneMPro" className={currentErrors.phoneMPro ? "font-weight-bold text-danger" : "font-weight-bold"}>Tél. Mobile pro</label>
                   <input
                     type="text"
                     name="phoneMPro"
-                    className="form-control"
+                    className={currentErrors.phoneMPro ? "form-control is-invalid" : "form-control"}
                     id="phoneMPro"
                     onChange={this.handleChange}
                   />
@@ -753,9 +757,10 @@ class CreateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="adresse">Adresse *</label>
+                  <label htmlFor="adresse" className={currentErrors.adresse ? "font-weight-bold text-danger" : "text-center font-weight-bold"}>Adresse *</label>
                   <CSelect
                     custom
+                    className={currentErrors.adresse ? "form-control is-invalid" : "form-control"}
                     name="adresse"
                     id="adresse"
                     onChange={this.handleChange}
@@ -779,9 +784,10 @@ class CreateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="domain">Domaine</label>
+                  <label htmlFor="domain" className={currentErrors.domain ? "font-weight-bold text-danger" : "text-center font-weight-bold"}>Domaine *</label>
                   <CSelect
                     custom
+                    className={currentErrors.domain ? "form-control is-invalid" : "form-control"}
                     name="domain"
                     id="domain"
                     onChange={this.handleChange}
@@ -800,8 +806,9 @@ class CreateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="company">Entreprise</label>
+                  <label htmlFor="company" className={currentErrors.company ? "font-weight-bold text-danger" : "font-weight-bold"}>Entreprise *</label>
                   <CSelect
+                    className={currentErrors.company ? "form-control is-invalid" : "form-control"}
                     custom
                     name="company"
                     id="company"
@@ -823,7 +830,7 @@ class CreateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="skills">Compétences</label>
+                  <label htmlFor="skills" className={currentErrors.skills ? "font-weight-bold text-danger" : "text-center font-weight-bold"}>Compétences</label>
                   <Select
                     name="skills"
                     placeholder="Liste des compétences"
@@ -839,7 +846,7 @@ class CreateSalarie extends Component {
             <div className="row">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="roles">Rôle *</label>
+                  <label htmlFor="roles" className={currentErrors.role ? "font-weight-bold text-danger" : "text-center font-weight-bold"}>Rôle *</label>
                   <Select
                     name="roles"
                     placeholder="Liste des rôles"

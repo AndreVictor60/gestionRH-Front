@@ -234,11 +234,20 @@ class Salarie extends Component {
                       </table>
                     </CCardBody>
                     <CCardFooter>
-                      <CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
-                        <CButton active block color="info" aria-pressed="true"to={"/salaries/modification/" + currentSalarie.id}>
-                        <FontAwesomeIcon icon={["far", "edit"]} /> Modifier
-                        </CButton>
-                      </CCol>
+                      <CRow>
+                        <CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
+                          <CButton active block color="info" aria-pressed="true"to={"/salaries/modification/" + currentSalarie.id}>
+                          <FontAwesomeIcon icon={["far", "edit"]} /> Modifier
+                          </CButton>
+                        </CCol>
+                        <CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
+                          <Link to={{pathname: "/salaries/updatePassword", state: currentSalarie}}>
+                            <CButton type="button" block color="info">
+                            <FontAwesomeIcon icon={["fas", "lock"]} /> Modifier le mot de passe
+                            </CButton>
+                          </Link>
+                        </CCol>
+                      </CRow>
                     </CCardFooter>
                   </CCard>
                 </CCol>

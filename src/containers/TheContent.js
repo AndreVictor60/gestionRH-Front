@@ -5,6 +5,7 @@ import {
   Switch
 } from 'react-router-dom'
 import { CContainer, CFade } from '@coreui/react'
+import PrivateRoute from "../router/PrivateRoute";
 
 // routes config
 import routes from '../routes'
@@ -23,11 +24,12 @@ const TheContent = () => {
           <Switch>
             {routes.map((route, idx) => {
               return route.component && (
-                <Route
+                <PrivateRoute
                   key={idx}
                   path={route.path}
                   exact={route.exact}
                   name={route.name}
+                  role={route.role}
                   render={props => (
                     <CFade>
                       <route.component {...props} />
