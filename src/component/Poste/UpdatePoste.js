@@ -2,10 +2,8 @@ import { CButton, CSelect, CAlert } from '@coreui/react';
 import React, { Component } from 'react';
 import { withRouter } from "react-router-dom";
 import SalariesService from "../../services/salaries.service";
-import TitrePosteService from "../../services/titre-poste.service";
 import PosteService from "../../services/poste.service";
 import CompetenceService from "../../services/competence.service";
-import TypeContratService from "../../services/type-contrat.service";
 import EntrepriseService from "../../services/entreprises.service";
 import DomainesService from "../../services/domaine.service";
 import Select from 'react-select';
@@ -19,16 +17,6 @@ import "./styles.css";
 class UpdatePoste extends Component {
   constructor(props) {
     super(props);
-    this.getAllSalarie = this.getAllSalarie.bind(this);
-    this.getAllSalarieByDomaineAndCompetence = this.getAllSalarieByDomaineAndCompetence.bind(this);
-    this.getAllSalarieWithoutPoste = this.getAllSalarieWithoutPoste.bind(this);
-    this.getAllSalarieWithoutPosteByDomaineAndCompetence = this.getAllSalarieWithoutPosteByDomaineAndCompetence.bind(this);
-    this.onChangeSalarie = this.onChangeSalarie.bind(this);
-    this.onchangeSalarieSansPoste = this.onchangeSalarieSansPoste.bind(this);
-    this.getAllTitrePoste = this.getAllTitrePoste.bind(this);
-    this.onChangeTitrePoste = this.onChangeTitrePoste.bind(this);
-    this.getAllTypeContrat = this.getAllTypeContrat.bind(this);
-    this.onChangeTypeContrat = this.onChangeTypeContrat.bind(this);
     this.onChangeDateDebut = this.onChangeDateDebut.bind(this);
     this.onChangeDateFin = this.onChangeDateFin.bind(this);
     this.onChangeVolumeHoraire = this.onChangeVolumeHoraire.bind(this);
@@ -43,19 +31,13 @@ class UpdatePoste extends Component {
     this.ifSAlariePoste = this.ifSAlariePoste.bind(this);
     this.updatePoste = this.updatePoste.bind(this);
     this.getAllDomaine = this.getAllDomaine.bind(this);
-    this.onChangeDomaine = this.onChangeDomaine.bind(this);
 
     this.state = {
       posteId: this.props.posteId.id,
       //samplePDF: "src/assets/contrat/contrat_Herduin_Corentin_3.pdf",
       errors: { dateFinInf: null, volumeNeg: null, extensionFichier: null, envoiFichier: null, dateInfAujDHui: null, salarieAcPoste: null },
-      salaries: [],
       domaines: [],
-      domainePosteComp: null,
       domainePoste: null,
-      competencesPoste: [],
-      titresPoste: [],
-      typesContrat: [],
       entreprises: [],
       managers: [],
       maitresApprentissage: [],
@@ -118,14 +100,12 @@ class UpdatePoste extends Component {
         },
       }
     };
-    
+
   }
 
   componentDidMount() {
     this.onGetPoste(this.props.posteId.id);
     this.getAllDomaine();
-    this.getAllTitrePoste();
-    this.getAllTypeContrat();
     this.getAllEntreprise();
     this.getAllManager();
     this.getAllMaitreApprentissage();
@@ -140,7 +120,7 @@ class UpdatePoste extends Component {
         });
         console.log("data : ", response.data);
         this.setState({
-          domainePosteComp: this.sortByFrequency(response.data.competencesRequises.map(comp => comp.domaines.map(dom => dom.id)))[0]
+          domainePoste: this.sortByFrequency(response.data.competencesRequises.map(comp => comp.domaines.map(dom => dom.id)))[0]
         });
         this.getAllCompetenceByDomaine(this.sortByFrequency(response.data.competencesRequises.map(comp => comp.domaines.map(dom => dom.id)))[0]);
       })
@@ -149,108 +129,9 @@ class UpdatePoste extends Component {
       });
   }
 
-  onChangeSalarie(e) {
-    const idSalarie = e.target.value;
-    this.ifSAlariePoste(idSalarie);
-    if (0 !== idSalarie) {
-      this.setState((prevState) => ({
-        currentPoste: {
-          ...prevState.currentPoste,
-          salarie: {
-            id: idSalarie
-          }
-        }
-      }));
-    }
-    console.log("salarie : ", this.state.salaries);
-  }
 
-  getAllSalarie() {
-    SalariesService.getAll()
-      .then(response => {
-        this.setState({
-          salaries: response.data
-        });
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  }
 
-  getAllSalarieByDomaineAndCompetence(domaine, competence) {
-    SalariesService.getAllSalariesByDomaineAndCompetence(domaine, competence.map(c => c.value))
-      .then(response => {
-        this.setState({
-          salaries: response.data
-        });
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  }
 
-  getAllSalarieWithoutPoste() {
-    SalariesService.getAll()
-      .then(response => {
-        this.setState({
-          salaries: response.data.filter(salarie => salarie.postes.length === 0 || (!compareDateStringWithDateCurrent(salarie.postes[0].dateFin) && salarie.postes[0].dateFin != null)),
-        });
-        console.log("salarie : ", this.state.salaries);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  }
-
-  getAllSalarieWithoutPosteByDomaineAndCompetence(domaine, competence) {
-    SalariesService.getAllSalariesWithoutPosteByDomaineAndCompetence(domaine, competence.map(c => c.value))
-      .then(response => {
-        this.setState({
-          salaries: response.data,
-        });
-        console.log("salarie : ", this.state.salaries);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  }
-
-  onchangeSalarieSansPoste() {
-    //(e) if(e.target.checked){
-    if (document.getElementById("salariesansposte").checked) {
-      //tout les salaries
-      this.getAllSalarieByDomaineAndCompetence(this.state.domainePoste, this.state.currentPoste.competencesRequises);
-    }
-    else {
-      //salarie sans poste
-      this.getAllSalarieWithoutPosteByDomaineAndCompetence(this.state.domainePoste, this.state.currentPoste.competencesRequises);
-    }
-  }
-
-  onChangeTitrePoste(e) {
-    const idTitrePoste = e.target.value;
-    if (0 !== idTitrePoste) {
-      this.setState((prevState) => ({
-        currentPoste: {
-          ...prevState.currentPoste,
-          titrePoste: {
-            id: idTitrePoste
-          }
-        }
-      }));
-    }
-  }
-  getAllTitrePoste() {
-    TitrePosteService.getAllTitrePoste()
-      .then(response => {
-        this.setState({
-          titresPoste: response.data
-        });
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  }
 
   getAllDomaine() {
     DomainesService.getAllDomaine()
@@ -264,52 +145,7 @@ class UpdatePoste extends Component {
       });
   }
 
-  onChangeDomaine(e) {
-    const idDomaine = e.target.value;
-    if ("0" !== idDomaine) {
-      document.getElementById('competenceFormPoste').className = "row";
-      this.setState({
-        domainePoste: idDomaine
-      });
-      //recupérer etat checkbox et appeler onchangeSalarieSansPoste(e)
-      //this.onchangeSalarieSansPoste();
-      this.getAllCompetenceByDomaine(idDomaine);
-      console.log("domainePoste : ", this.state.domainePoste);
-    } else {
-      document.getElementById('competenceFormPoste').className = "row d-none";
-      document.getElementById('bodyFormPoste').className = "form-group d-none";
-      this.setState({
-        currentPoste: {
-          competencesRequises: null
-        }
-      });
-    }
-  }
 
-  onChangeTypeContrat(e) {
-    const idTypeContrat = e.target.value;
-    if (0 !== idTypeContrat) {
-      this.setState((prevState) => ({
-        currentPoste: {
-          ...prevState.currentPoste,
-          typeContrat: {
-            id: idTypeContrat
-          }
-        }
-      }));
-    }
-  }
-  getAllTypeContrat() {
-    TypeContratService.getAllTypeContrat()
-      .then(response => {
-        this.setState({
-          typesContrat: response.data
-        });
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  }
 
   onChangeCompetence(e) {
     console.log("competence : ", e);
@@ -415,19 +251,19 @@ class UpdatePoste extends Component {
 
   onChangeVolumeHoraire(e) {
     let Volume = null;
-    if(e.target === undefined){
-      console.log("e undifined : ",e)
+    if (e.target === undefined) {
+      console.log("e undifined : ", e)
       Volume = parseInt(e);
     }
-    else{
-      console.log("e difined : ",e.target.value)
+    else {
+      console.log("e difined : ", e.target.value)
       Volume = parseInt(e.target.value);
     }
 
-    console.log("onChangeVolumeHoraire : ",Volume," || type : ",this.state.typeHoraire);
+    console.log("onChangeVolumeHoraire : ", Volume, " || type : ", this.state.typeHoraire);
     if (ifNumberWithDecimal(Volume)) {
       if (Volume > 0) {
-        if (this.state.typeHoraire === 0) {
+        if (this.state.typeHoraire === "H") {
           this.setState((prevState) => ({
             currentPoste: {
               ...prevState.currentPoste,
@@ -477,8 +313,10 @@ class UpdatePoste extends Component {
     const typeHoraire = e.target.value;
     //h0 j1
     if (0 !== typeHoraire.length) {
-      this.setState({ typeHoraire: typeHoraire })
-      this.state.currentPoste.volumeHoraire === null ? this.onChangeVolumeHoraire(this.state.currentPoste.volumeJournalier) : this.onChangeVolumeHoraire(this.state.currentPoste.volumeHoraire);
+      this.setState({ typeHoraire: typeHoraire }, () => {
+        console.log("onChangeTypeHoraire : heure : ", this.state.currentPoste.volumeHoraire, " || jour : ", this.state.currentPoste.volumeJournalier);
+        this.state.currentPoste.volumeHoraire === null ? this.onChangeVolumeHoraire(this.state.currentPoste.volumeJournalier) : this.onChangeVolumeHoraire(this.state.currentPoste.volumeHoraire);
+      })
     }
   }
 
@@ -534,7 +372,7 @@ class UpdatePoste extends Component {
 
   onChangeMaitreApprentissage(e) {
     const idMaitresApprentissage = e.target.value;
-    console.log("maitre apprenti : ",idMaitresApprentissage);
+    console.log("maitre apprenti : ", idMaitresApprentissage);
     if (0 !== idMaitresApprentissage) {
       this.setState((prevState) => ({
         currentPoste: {
@@ -579,13 +417,13 @@ class UpdatePoste extends Component {
   }
 
   uploadFile(fichier, idSalarie, idPoste) {
-    console.log("upload : fichier : ",fichier," || idsalarie : ",idSalarie," || idposte : ",idPoste);
+    console.log("upload : fichier : ", fichier, " || idsalarie : ", idSalarie, " || idposte : ", idPoste);
     const formData = new FormData();
     let infosalarie = null;
     SalariesService.getSalarieById(idSalarie)
       .then(response => {
         infosalarie = response.data;
-        console.log("infosalarie : ",infosalarie);
+        console.log("infosalarie : ", infosalarie);
         const nomfichier = "contrat_" + infosalarie.nom + "_" + infosalarie.prenom + "_" + idPoste + ".pdf";
 
         formData.append('file', fichier);
@@ -668,49 +506,44 @@ class UpdatePoste extends Component {
     const data = JSON.parse(json);
     const formData = new FormData();
     formData.append('contrat', this.state.fichierContratBrut);
-    console.log("data update",data);
-    
-    if(this.state.fichierContratBrut){
+    console.log("data update", data);
+
+    if (this.state.fichierContratBrut) {
       PosteService.updatePoste(data).then((resp) => {
-        console.log("response : ",resp);
+        console.log("response : ", resp);
         //titre : contrat_nom_prenom_idPoste.pdf
         this.uploadFile(this.state.fichierContratBrut, resp.data.salarie.id, resp.data.id);
         this.props.history.push("/poste/liste");
-      }).catch((e) => { console.log("erreur update if : ",e)})
-    }else{
+      }).catch((e) => { console.log("erreur update if : ", e) })
+    } else {
       PosteService.updatePoste(data).then((resp) => {
-        console.log("response : ",resp);
+        console.log("response : ", resp);
         this.props.history.push("/poste/liste");
-      }).catch((e) => { console.log("erreur update else : ",e)})
+      }).catch((e) => { console.log("erreur update else : ", e) })
     }
-    
+
   }
 
   render() {
-    const { posteId, salaries, titresPoste, typesContrat, entreprises, managers, competences, maitresApprentissage, currentPoste, domaines, domainePosteComp } = this.state;
-    console.log("heure : ",currentPoste.volumeHoraire," || jour : ",currentPoste.volumeJournalier);
+    const { entreprises, managers, competences, maitresApprentissage, currentPoste, domaines, domainePoste } = this.state;
+    console.log("heure : ", currentPoste.volumeHoraire, " || jour : ", currentPoste.volumeJournalier);
     /*const pdflink = import('src/assets/contrat/contrat_Herduin_Corentin_1.pdf').then((resp) => {return resp.default});
     console.log("pdflink : ", pdflink);*/
     return (
       <>
-        <p>Modif : {posteId}</p>
-
         <div className="submit-form">
           <div className="row">
             <div className="col">
               <div className="form-group">
-                <label htmlFor="titrePoste">Domaine du poste *</label>
-                <CSelect custom name="titrePoste" id="titrePoste" onChange={this.onChangeDomaine} required>
+                <label htmlFor="domainePoste">Domaine du poste *</label>
+                <CSelect custom name="domainePoste" id="domainePoste" disabled required>
                   <option value="0">Veuillez sélectionner un Domaine</option>
                   {domaines.map((domaine, key) => (
-                    parseInt(domainePosteComp) === parseInt(domaine.id) ?
+                    parseInt(domainePoste) === parseInt(domaine.id) ?
                       <option defaultValue key={key} selected={domaine.id}>
                         {domaine.titre}
                       </option>
-                      :
-                      <option key={key} value={domaine.id}>
-                        {domaine.titre}
-                      </option>
+                      : ""
                   ))}
                 </CSelect>
               </div>
@@ -720,7 +553,7 @@ class UpdatePoste extends Component {
             <div className="row" id="competenceFormPoste">
               <div className="col">
                 <div className="form-group">
-                  <label htmlFor="skills">Compétences *</label>
+                  <label htmlFor="competences">Compétences *</label>
 
                   <Select
                     name="competences"
@@ -744,27 +577,17 @@ class UpdatePoste extends Component {
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="salarie">Salarié *</label>
-                    <CSelect custom name="salarie" id="salarie" onChange={this.onChangeSalarie} required
+                    <CSelect custom name="salarie" id="salarie" disabled required
                       value={
                         currentPoste.salarie.id === null
                           ? 0
                           : currentPoste.salarie.id
                       }
                     >
-                      <option value="0">Veuillez sélectionner un salarié</option>
                       <option defaultValue value={currentPoste.salarie.id}>
                         {currentPoste.salarie.nom + " " + currentPoste.salarie.prenom}
                       </option>
-                      {salaries.map((salarie, key) => (
-                        <option key={key} value={salarie.id}>
-                          {salarie.nom + " " + salarie.prenom}
-                        </option>
-                      ))}
                     </CSelect>
-                  </div>
-                  <div className="form-group form-check">
-                    <input type="checkbox" value="1" className="form-check-input" id="salariesansposte" onChange={this.onchangeSalarieSansPoste} />
-                    <label className="form-check-label" htmlFor="salariesansposte">Afficher les salariés</label>
                   </div>
                 </div>
               </div>
@@ -772,19 +595,10 @@ class UpdatePoste extends Component {
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="typeContrat">Type de contrat *</label>
-                    <CSelect custom name="typeContrat" id="typeContrat" onChange={this.onChangeTypeContrat} required
-                      value={
-                        currentPoste.typeContrat.id === null
-                          ? 0
-                          : currentPoste.typeContrat.id
-                      }
-                    >
-                      <option value="0">Veuillez sélectionner un type de contrat</option>
-                      {typesContrat.map((typeContrat, key) => (
-                        <option key={key} value={typeContrat.id}>
-                          {typeContrat.type}
-                        </option>
-                      ))}
+                    <CSelect custom name="typeContrat" id="typeContrat" disabled required>
+                      <option value={currentPoste.typeContrat.id}>
+                        {currentPoste.typeContrat.type}
+                      </option>
                     </CSelect>
                   </div>
                 </div>
@@ -794,19 +608,10 @@ class UpdatePoste extends Component {
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="titrePoste">Intitulé de poste *</label>
-                    <CSelect custom name="titrePoste" id="titrePoste" onChange={this.onChangeTitrePoste} required
-                      value={
-                        currentPoste.titrePoste.id === null
-                          ? 0
-                          : currentPoste.titrePoste.id
-                      }
-                    >
-                      <option value="0">Veuillez sélectionner un intitulé de poste</option>
-                      {titresPoste.map((titrePoste, key) => (
-                        <option key={key} value={titrePoste.id}>
-                          {titrePoste.intitule}
-                        </option>
-                      ))}
+                    <CSelect custom name="titrePoste" id="titrePoste" disabled required>
+                      <option value={currentPoste.titrePoste.id}>
+                        {currentPoste.titrePoste.intitule}
+                      </option>
                     </CSelect>
                   </div>
                 </div>
@@ -851,13 +656,13 @@ class UpdatePoste extends Component {
                     />
                     <div onChange={this.onChangeTypeHoraire} className="form-check">
                       <div className="form-check form-check-inline">
-                        <input type="radio" value="1" name="typeHoraire" id="typeHoraireJ" className="form-check-input" required />
-                        <label className="form-check-label" htmlFor="typeHoraireJ" defaultChecked={currentPoste.volumeJournalier !== null || currentPoste.volumeJournalier !== 0} >
+                        <input type="radio" value="J" name="typeHoraire" id="typeHoraireJ" className="form-check-input" required checked={currentPoste.volumeJournalier !== 0} />
+                        <label className="form-check-label" htmlFor="typeHoraireJ">
                           Jour
                         </label>
                       </div>
                       <div className="form-check form-check-inline">
-                        <input type="radio" value="0" name="typeHoraire" id="typeHoraireH" className="form-check-input" required defaultChecked={currentPoste.volumeHoraire !== null || currentPoste.volumeHoraire !== 0} />
+                        <input type="radio" value="H" name="typeHoraire" id="typeHoraireH" className="form-check-input" required checked={currentPoste.volumeHoraire !== 0} />
                         <label className="form-check-label" htmlFor="typeHoraireH">
                           Heure
                         </label>
@@ -934,7 +739,7 @@ class UpdatePoste extends Component {
                 <label htmlFor="contrat">Contrat (PDF) *</label>
                 <input type="file" id="contrat" name="contrat" className="form-control-file" onChange={this.onChangeFichierContrat} accept="application/pdf" />
               </div>
-              <a href={"C:/tempBidon/"+currentPoste.fichierContrat} className="font-weight-bold"> Contrat actuel </a>
+              <a href={"C:/tempBidon/" + currentPoste.fichierContrat} className="font-weight-bold"> Contrat actuel </a>
               {/*<div className="all-page-container">
                 <AllPagesPDFViewer pdf={pdflink} />
               </div>
@@ -943,7 +748,7 @@ class UpdatePoste extends Component {
               </div>*/}
               {this.state.errors.extensionFichier != null ? <CAlert color="danger">{this.state.errors.extensionFichier}</CAlert> : ""}
               <CButton type="submit" block color="info">
-                Modfier le salarié
+                Modfier le poste
               </CButton>
             </div>
           </form>
