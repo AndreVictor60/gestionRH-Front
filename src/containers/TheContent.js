@@ -1,7 +1,6 @@
 import React, { Suspense } from 'react'
 import {
   Redirect,
-  Route,
   Switch
 } from 'react-router-dom'
 import { CContainer, CFade } from '@coreui/react'
@@ -30,6 +29,7 @@ const TheContent = () => {
                   exact={route.exact}
                   name={route.name}
                   role={route.role}
+                  redirectTo={route.redirectTo}
                   render={props => (
                     <CFade>
                       <route.component {...props} />

@@ -9,7 +9,6 @@ import CompetenceService from "../../services/competence.service";
 import RoleService from "../../services/role.service";
 import SalariesService from "../../services/salaries.service";
 import { isMajor, isValidDate } from "src/utils/fonctions";
-import { Link } from "react-router-dom";
 
 class UpdateSalarie extends Component {
   constructor(props) {

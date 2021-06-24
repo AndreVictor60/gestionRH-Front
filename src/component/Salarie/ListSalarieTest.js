@@ -1,11 +1,10 @@
 import React, { Component } from "react";
-import { CButton,CSelect } from "@coreui/react";
+import { CButton } from "@coreui/react";
 import { Link } from "react-router-dom";
 import SalariesService from "../../services/salaries.service";
 import { compareDateStringWithDateCurrent } from "../../utils/fonctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faEye } from "@fortawesome/free-solid-svg-icons";
-import ReactPaginate from 'react-paginate';
 
 class ListSalarie extends Component {
   constructor(props) {

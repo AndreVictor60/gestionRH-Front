@@ -443,4 +443,6 @@ class UpdateSalarie extends Component {
         );
     }
 }
+
+
 export default withRouter(UpdateSalarie);

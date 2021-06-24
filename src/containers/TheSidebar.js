@@ -14,12 +14,21 @@ import {
 import logos from "../assets/icons/logo.png";
 import CIcon from '@coreui/icons-react'
 // sidebar nav config
-import navigation from './_nav'
+import {navAdmin, navRH,navManager,navEmployee} from './_nav';
+import jwt_decode from 'jwt-decode';
+
+
+
 
 const TheSidebar = () => {
+  
   const dispatch = useDispatch()
   const show = useSelector(state => state.changeStateReducer.sidebarShow)
-
+  const authen = useSelector(state => state.authen);
+  const user = jwt_decode(authen.user);
+  const isAdmin = user.roles.some(e => e.titre === "ADMIN");
+  const isRH = user.roles.some(e => e.titre === "RH");
+  const isManager = user.roles.some(e => e.titre === "MANAGER");
   return (
     <CSidebar
       show={show}
@@ -42,7 +51,7 @@ const TheSidebar = () => {
       <CSidebarNav>
 
         <CCreateElement
-          items={navigation}
+          items={isAdmin ? navAdmin : isRH ? navRH : isManager ? navManager : navEmployee }
           components={{
             CSidebarNavDivider,
             CSidebarNavDropdown,
