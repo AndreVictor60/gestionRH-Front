@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { CButton,CSelect } from "@coreui/react";
+import { CButton, CSelect } from "@coreui/react";
 import { Link } from "react-router-dom";
 import SalariesService from "../../services/salaries.service";
 import { compareDateStringWithDateCurrent } from "../../utils/fonctions";
@@ -26,16 +26,15 @@ class ListSalarie extends Component {
 
   componentDidMount() {
     this.retrieveSalaries();
-    console.log("isRole",this.props.isRole);
   }
-  
+
 
   retrieveSalaries() {
     SalariesService.count(this.state.searchExpression).then((resp) => {
       let nbPage = Math.ceil(resp.data / this.state.itemsPerPage)
       this.setState({ pageCount: nbPage })
     }).catch((e) => { console.log(e) });
-    SalariesService.getAllSalariesByKeywordPerPage(this.state.currentPage, this.state.itemsPerPage,this.state.searchExpression)
+    SalariesService.getAllSalariesByKeywordPerPage(this.state.currentPage, this.state.itemsPerPage, this.state.searchExpression)
       .then((response) => {
         this.setState({
           salaries: response.data,
@@ -55,7 +54,7 @@ class ListSalarie extends Component {
 
   searchEmployee(e) {
     e.preventDefault();
-    this.setState({ currentPage: 0 },() => {this.retrieveSalaries();});
+    this.setState({ currentPage: 0 }, () => { this.retrieveSalaries(); });
   }
 
   handleChange(e) {
@@ -63,13 +62,13 @@ class ListSalarie extends Component {
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.name;
     if (name === "searchExpression") {
-      this.setState({searchExpression: value}) 
+      this.setState({ searchExpression: value })
     }
-    if( name === "nbPage"){
-      this.setState({itemsPerPage: value}, () => {this.retrieveSalaries();}) 
+    if (name === "nbPage") {
+      this.setState({ itemsPerPage: value }, () => { this.retrieveSalaries(); })
     }
   }
-  
+
 
   render() {
     const { salaries } = this.state;
@@ -83,24 +82,24 @@ class ListSalarie extends Component {
               <input type="text" id="search-expression"
                 name="searchExpression" placeholder="Saisir votre recherche.." onChange={this.handleChange} className="form-control" />
               <span className="input-group-prepend">
-              <CButton type="submit" block color="info">
-                Recherche
-              </CButton>
+                <CButton type="submit" block color="info">
+                  Recherche
+                </CButton>
               </span>
             </div>
           </form>
           <form className="col-md-2 ">
-          <CSelect
-                    custom
-                    name="nbPage"
-                    id="nbPage"
-                    onChange={this.handleChange}
-                  >
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                  </CSelect>
+            <CSelect
+              custom
+              name="nbPage"
+              id="nbPage"
+              onChange={this.handleChange}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+            </CSelect>
           </form>
         </div>
         <div className="row mt-4">
@@ -122,7 +121,7 @@ class ListSalarie extends Component {
                     <td>{salarie.nom + " " + salarie.prenom}</td>
                     <td>
                       {salarie.postes.length !== 0
-                        ? compareDateStringWithDateCurrent(salarie.postes[0].dateFin) || salarie.postes[0].dateFin === null ? salarie.postes[0].typeContrat.type: ""
+                        ? compareDateStringWithDateCurrent(salarie.postes[0].dateFin) || salarie.postes[0].dateFin === null ? salarie.postes[0].typeContrat.type : ""
                         : ""}
                     </td>
                     <td>
@@ -162,7 +161,7 @@ class ListSalarie extends Component {
                           <FontAwesomeIcon icon={faEye} /> Voir
                         </CButton>
                       </Link>{" "}
-                      {isRole <= 2  && (<Link to={"/salaries/modification/" + salarie.id}>
+                      {isRole <= 2 && (<Link to={"/salaries/modification/" + salarie.id}>
                         <CButton
                           className="mr-2"
                           color="info"
@@ -171,7 +170,7 @@ class ListSalarie extends Component {
                           <FontAwesomeIcon icon={faEdit} /> Modifier
                         </CButton>
                       </Link>)}
-                      
+
                     </td>
                   </tr>
                 ))}

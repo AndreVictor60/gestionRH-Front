@@ -16,6 +16,7 @@ import { Link } from "react-router-dom";
 import moment from 'moment';
 import momentFR from 'moment/locale/fr';
 import { connect } from "react-redux";
+import jwt_decode from 'jwt-decode';
 
 class Salarie extends Component {
   _isMounted = false;
@@ -55,10 +56,10 @@ class Salarie extends Component {
       errors: {},
       offsetSkill: 0,
       perPageSkill: 5,
-      pageCountSkill: 0, 
+      pageCountSkill: 0,
       offsetTraining: 0,
       perPageTraining: 5,
-      pageCountTraining: 0, 
+      pageCountTraining: 0,
     };
     moment.locale('fr', momentFR);
   }
@@ -66,6 +67,13 @@ class Salarie extends Component {
   componentDidMount() {
     this._isMounted = true;
     this.getSalarie(this.props.salarieId.id);
+    this.unlisten = this.props.history.listen((location, action) => {
+      if (location !== null && location !== undefined) {
+        if (location.state !== this.state.currentSalarie.id) {
+          this.getSalarie(location.state);
+        }
+      }
+    });
   }
 
   componentWillUnmount() {
@@ -79,9 +87,8 @@ class Salarie extends Component {
           this.setState({
             currentSalarie: response.data,
           });
-          const displaySkill = this.getPaginatedItems(this.state.currentSalarie.competences,1);
-          console.log("displaySkill",displaySkill);
-          const displayTraining = this.getPaginatedItems(this.state.currentSalarie.formations,2);
+          const displaySkill = this.getPaginatedItems(this.state.currentSalarie.competences, 1);
+          const displayTraining = this.getPaginatedItems(this.state.currentSalarie.formations, 2);
           const pageCountSkill = Math.ceil(this.state.currentSalarie.competences.length / this.state.perPageSkill);
           const pageCountTraining = Math.ceil(this.state.currentSalarie.formations.length / this.state.perPageTraining);
           this.setState({
@@ -97,14 +104,14 @@ class Salarie extends Component {
       });
   }
 
-  getPaginatedItems(items,type) {
+  getPaginatedItems(items, type) {
 
-    if(type === 1){
+    if (type === 1) {
       return items.slice(this.state.offsetSkill, this.state.offsetSkill + this.state.perPageSkill);
-    }else{
+    } else {
       return items.slice(this.state.offsetSkill, this.state.offsetSkill + this.state.perPageTraining);
     }
-     
+
   }
 
   changeProfil(e) {
@@ -124,7 +131,7 @@ class Salarie extends Component {
     });
   };
 
-  handlePageClickTraining(data){
+  handlePageClickTraining(data) {
     let selected = data.selected;
     let offset = Math.ceil(selected * this.state.perPageTraining);
     this.setState({ offsetTraining: offset }, () => {
@@ -136,8 +143,10 @@ class Salarie extends Component {
   }
 
   render() {
-    const { currentSalarie, displaySkill ,displayTraining} = this.state;
-    const { isRole } = this.props;
+    const { currentSalarie, displaySkill, displayTraining } = this.state;
+    const { isRole,user } = this.props;
+    const userDecode = jwt_decode(user);
+    console.log(userDecode);
     return (
       <CRow>
         <CCol>
@@ -281,19 +290,19 @@ class Salarie extends Component {
                     </CCardBody>
                     <CCardFooter>
                       <CRow>
-                        <CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
+                      {(isRole === 1 || isRole === 2) && (<CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
                           <CButton active block color="info" aria-pressed="true" to={"/salaries/modification/" + currentSalarie.id}>
                             <FontAwesomeIcon icon={["far", "edit"]} /> Modifier
                           </CButton>
-                        </CCol>
-                        {isRole === 1 && (<CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
+                        </CCol>)}
+                        {(isRole === 1 || currentSalarie.id === userDecode.id) && (<CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
                           <Link to={{ pathname: "/salaries/updatePassword", state: currentSalarie }}>
                             <CButton type="button" block color="info">
                               <FontAwesomeIcon icon={["fas", "lock"]} /> Modifier le mot de passe
                             </CButton>
                           </Link>
                         </CCol>)}
-                        
+
                       </CRow>
                     </CCardFooter>
                   </CCard>
@@ -330,7 +339,7 @@ class Salarie extends Component {
                             </tbody>
                           </table>
                           <ReactPaginate
-                          name="test"
+                            name="test"
                             previousLabel={'Précédent'}
                             nextLabel={'Suivant'}
                             breakLabel={'...'}
@@ -366,7 +375,7 @@ class Salarie extends Component {
                               </tr>
                             </thead>
                             <tbody>
-                              {displaySkill && 
+                              {displaySkill &&
                                 displaySkill.map((d) => {
                                   return (
                                     <tr key={d.id}>
@@ -411,9 +420,10 @@ class Salarie extends Component {
   }
 }
 function mapStateToProps(state) {
-  const { isRole } = state.authen;
+  const { isRole,user } = state.authen;
   return {
     isRole,
+    user
   };
 }
-export default withRouter( connect(mapStateToProps)(Salarie) );
+export default withRouter(connect(mapStateToProps)(Salarie));
