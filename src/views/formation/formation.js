@@ -1,7 +1,6 @@
 import {
   CCard,
   CCardBody,
-  CCardHeader,
   CCol,
   CRow,
 } from "@coreui/react";
@@ -15,7 +14,6 @@ export class listFormation extends Component {
         <CRow>
           <CCol lg="12">
             <CCard>
-              <CCardHeader>Formation</CCardHeader>
               <CCardBody>
                 <Formation formationId={this.props.match.params} />
               </CCardBody>

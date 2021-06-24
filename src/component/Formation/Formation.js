@@ -1,45 +1,54 @@
 import React, { Component } from 'react'
 import FormationService from '../../services/formations.service';
 import moment from 'moment';
+import {
+    CButton,
+    CCard,
+    CCardBody,
+    CCardFooter,
+    CCardHeader,
+    CCol,
+    CRow,
+} from "@coreui/react";
 class Formation extends Component {
     constructor(props) {
         super(props);
         this.getAllEmployeeFormation = this.getAllEmployeeFormation.bind(this);
-        this.state={
+        this.state = {
             employeeFormation: [],
             formation: {
                 dateDebut: null,
                 dateFin: null,
                 domaine: {
-                    id:0,
+                    id: 0,
                     titre: null
                 },
                 duree: 0,
                 prix: 0,
                 titre: null,
                 competences: [{
-                    id:0,
+                    id: 0,
                     nom: null
                 }]
             }
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.retrieveFormation(this.props.formationId.id);
         this.getAllEmployeeFormation(this.props.formationId.id);
     }
 
     retrieveFormation(id) {
         FormationService.getFormationById(id)
-        .then(response => {
-            this.setState({
-                formation: response.data
+            .then(response => {
+                this.setState({
+                    formation: response.data
+                })
             })
-        })
-        .catch(e => {
-          console.log(e);
-        });
+            .catch(e => {
+                console.log(e);
+            });
     }
 
     getAllEmployeeFormation(idFormation) {
@@ -49,41 +58,88 @@ class Formation extends Component {
         }).catch((e) => {
             console.log(e);
         });
-      }
-    
+    }
+
     render() {
-        const {formation, employeeFormation} = this.state;
+        const { formation, employeeFormation } = this.state;
         const competences = formation.competences
         return (
-            <div>
-                <p>{formation.titre}<br />
-                    Date du début : {moment(formation.dateDebut).format('DD/MM/YYYY')} <br />
-                     Date de fin : {moment(formation.dateFin).format('DD/MM/YYYY')}<br />
-                     Prix: {formation.prix} €<br />
-                     Durée : {formation.duree}<br />
-                     Domaine : {formation.domaine.titre}</p>
-                <fieldset>
-                    <legend>Compétences à promouvoir lors cette formation :</legend>
-                    <ul>
-                        {competences.map(competence => 
-                        <div key={competence.id}>
-                            <li>{competence.nom}</li>
-                        </div>
-                        )}
-                    </ul>
-                </fieldset>
-                {employeeFormation.length>0 ? 
-                <fieldset>
-                <legend>Liste des salariés participants à la formation : </legend>
-                <ul>
-                    {employeeFormation.map(employee => 
-                    <div key={employee.id}>
-                        <li>{employee.nom+" "+employee.prenom}</li>
-                    </div>
-                    )}
-                </ul>
-            </fieldset> : null}
-            </div>
+            <>
+                <CRow>
+                    <CCol lg={6}>
+                        <CCard>
+                            <CCardHeader>{formation.titre}</CCardHeader>
+                            <CCardBody>
+                                <table className="table table-striped table-hover">
+                                    <tbody >
+                                        <tr>
+                                            <td className="font-weight-bold">Date de début</td>
+                                            <td>{moment(formation.dateDebut).format('DD/MM/YYYY')}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="font-weight-bold">Date de fin</td>
+                                            <td>{moment(formation.dateFin).format('DD/MM/YYYY')}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="font-weight-bold">Prix <small>(HT)</small></td>
+                                            <td>{formation.prix} €</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="font-weight-bold">Durée</td>
+                                            <td>{formation.duree}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="font-weight-bold">Domaine</td>
+                                            <td>{formation.domaine.titre}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </CCardBody>
+                        </CCard>
+                    </CCol>
+                    <CCol lg={6}>
+                        <CRow>
+                            <CCol lg={12}>
+                                <CCard>
+                                    <CCardHeader>Compétences à promouvoir lors cette formation</CCardHeader>
+                                    <CCardBody>
+                                        <table className="table table-striped table-hover">
+                                            <tbody>
+                                                {competences && competences.map(competence =>
+                                                    <tr key={competence.id}>
+                                                        <td>{competence.nom}</td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+
+                                    </CCardBody>
+                                </CCard>
+                            </CCol>
+                        </CRow>
+                    </CCol>
+                </CRow>
+                {employeeFormation.length !== 0 && (
+                    <CRow>
+                        <CCol>
+                            <CCard>
+                                <CCardHeader>Liste des salariés participants à la formation</CCardHeader>
+                                <CCardBody>
+                                    <table className="table table-striped table-hover">
+                                        <tbody >
+                                            {employeeFormation.map(employee =>
+                                                <tr key={employee.id}>
+                                                    <td>{employee.nom + " " + employee.prenom}</td>
+                                                </tr>
+                                            )}
+
+                                        </tbody>
+                                    </table>
+                                </CCardBody>
+                            </CCard>
+                        </CCol>
+                    </CRow>)}
+            </>
         )
     }
 }

@@ -122,6 +122,7 @@ class ListAdresse extends Component {
                 )}
               </tbody>
             </table>
+            {this.state.pageCount > 1 && ( 
             <ReactPaginate
               previousLabel={'Précédent'}
               nextLabel={'Suivant'}
@@ -141,7 +142,7 @@ class ListAdresse extends Component {
               nextClassName="page-item"
               previousClassName="page-item"
               forcePage={this.state.currentPage}
-            />
+            />)}
           </div>
         </div>
       </>

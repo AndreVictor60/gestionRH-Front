@@ -79,7 +79,7 @@ class ListPoste extends Component {
     PosteService.countCurrentPoste().then((resp) => {
       let nbPage = Math.ceil(resp.data / this.state.itemsPerPage);
       this.setState({ pageCount: nbPage });
-    })
+    }).catch(e => { console.log(e.response.data.message)})
     PosteService.getAllCurrentPoste(
       this.state.currentPage,
       this.state.itemsPerPage,

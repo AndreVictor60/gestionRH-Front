@@ -172,7 +172,7 @@ class ListEntretien extends Component {
                   </tbody>
                 )}
             </table>
-            <ReactPaginate
+            {this.state.pageCount > 1 && (            <ReactPaginate
               previousLabel={'Précédent'}
               nextLabel={'Suivant'}
               breakLabel={'...'}
@@ -191,7 +191,8 @@ class ListEntretien extends Component {
               nextClassName="page-item"
               previousClassName="page-item"
               forcePage={this.state.currentPage}
-            />
+            />)}
+
           </div>
         </div>
       </>
