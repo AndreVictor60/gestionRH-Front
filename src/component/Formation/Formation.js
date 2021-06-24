@@ -2,14 +2,13 @@ import React, { Component } from 'react'
 import FormationService from '../../services/formations.service';
 import moment from 'moment';
 import {
-    CButton,
     CCard,
     CCardBody,
-    CCardFooter,
     CCardHeader,
     CCol,
     CRow,
 } from "@coreui/react";
+import { Link } from "react-router-dom";
 class Formation extends Component {
     constructor(props) {
         super(props);
@@ -129,10 +128,9 @@ class Formation extends Component {
                                         <tbody >
                                             {employeeFormation.map(employee =>
                                                 <tr key={employee.id}>
-                                                    <td>{employee.nom + " " + employee.prenom}</td>
+                                                    <td><Link to={`/salaries/profil/${employee.id}`}>{employee.nom + " " + employee.prenom}</Link></td>
                                                 </tr>
                                             )}
-
                                         </tbody>
                                     </table>
                                 </CCardBody>

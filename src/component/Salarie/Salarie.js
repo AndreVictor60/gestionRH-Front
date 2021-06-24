@@ -328,7 +328,7 @@ class Salarie extends Component {
                                 displayTraining.map((t) => {
                                   return (
                                     <tr key={t.id}>
-                                      <td>{t.titre}</td>
+                                      <td><Link to={`/formations/voir/${t.id}`}>{t.titre}</Link></td>
                                       <td>{moment(t.dateDebut).format("ll")}</td>
                                       <td>{moment(t.dateFin).format("ll")}</td>
                                       <td>{t.duree}</td>
