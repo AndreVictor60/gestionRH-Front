@@ -60,7 +60,7 @@ class ListAdresse extends Component {
       this.setState({ searchExpression: value })
     }
     if (name === "nbPage") {
-      this.setState({ itemsPerPage: value }, () => { this.retrieveAdresses(); })
+      this.setState({ itemsPerPage: value, currentPage: 0 }, () => { this.retrieveAdresses(); })
     }
   }
 

@@ -9,6 +9,8 @@ import {
     CRow,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import jwt_decode from 'jwt-decode';
 class Formation extends Component {
     constructor(props) {
         super(props);
@@ -53,7 +55,6 @@ class Formation extends Component {
     getAllEmployeeFormation(idFormation) {
         FormationService.getSalarieByIdFormation(idFormation).then((response) => {
             this.setState({ employeeFormation: response.data });
-            console.log("employee formation : ", response.data);
         }).catch((e) => {
             console.log(e);
         });
@@ -61,7 +62,9 @@ class Formation extends Component {
 
     render() {
         const { formation, employeeFormation } = this.state;
-        const competences = formation.competences
+        const competences = formation.competences;
+        const { isRole,user } = this.props;
+        const userDecode = jwt_decode(user);
         return (
             <>
                 <CRow>
@@ -127,8 +130,9 @@ class Formation extends Component {
                                     <table className="table table-striped table-hover">
                                         <tbody >
                                             {employeeFormation.map(employee =>
+                                           
                                                 <tr key={employee.id}>
-                                                    <td><Link to={`/salaries/profil/${employee.id}`}>{employee.nom + " " + employee.prenom}</Link></td>
+                                                    {(employee.postes.length !== 0 &&  userDecode.id === employee.postes[0].manager.id) || isRole <= 2  ? (<td><Link to={`/salaries/profil/${employee.id}`}>{employee.nom + " " + employee.prenom}</Link></td>) : (<td>{employee.nom + " " + employee.prenom}</td>)}
                                                 </tr>
                                             )}
                                         </tbody>
@@ -141,5 +145,11 @@ class Formation extends Component {
         )
     }
 }
-
-export default Formation
+function mapStateToProps(state) {
+    const { isRole, user } = state.authen;
+    return {
+      isRole,
+      user
+    };
+  }
+export default connect(mapStateToProps)(Formation);

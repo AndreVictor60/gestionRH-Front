@@ -108,7 +108,7 @@ class ListTypeContrat extends Component {
       this.setState({searchExpression: value}) 
     }
     if( name === "nbPage"){
-      this.setState({itemsPerPage: value}, () => {this.retrieveTypeContrat();}) 
+      this.setState({itemsPerPage: value, currentPage: 0 }, () => {this.retrieveTypeContrat();}) 
     }
   }
 

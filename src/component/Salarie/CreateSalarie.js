@@ -32,8 +32,8 @@ class CreateSalarie extends Component {
         birthday: null,
         birthdayBool: true,
         password: null,
-        passwordMatch: true,
-        passwordMatchBool: null,
+        passwordMatch: null,
+        passwordMatchBool: true,
         passwordBool: true,
         phonePerso: null,
         phonePersoBool: null,
@@ -203,7 +203,7 @@ class CreateSalarie extends Component {
       }
     }
     if (name === "phonePerso") {
-      if (regexTel.test(value)) {
+      if (regexTel.test(value) || value.length === 0) {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -227,7 +227,7 @@ class CreateSalarie extends Component {
     }
 
     if (name === "phoneMPerso") {
-      if (regexTel.test(value)) {
+      if (regexTel.test(value) || value.length === 0) {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -251,7 +251,7 @@ class CreateSalarie extends Component {
     }
 
     if (name === "phonePro") {
-      if (regexTel.test(value)) {
+      if (regexTel.test(value) || value.length === 0) {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,
@@ -275,7 +275,7 @@ class CreateSalarie extends Component {
     }
 
     if (name === "phoneMPro") {
-      if (regexTel.test(value)) {
+      if (regexTel.test(value) || value.length === 0) {
         this.setState((prevState) => ({
           currentErrors: {
             ...prevState.currentErrors,

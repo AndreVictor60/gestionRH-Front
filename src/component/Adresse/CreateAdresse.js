@@ -116,7 +116,7 @@ import { withRouter } from "react-router-dom";
             },
             currentAdresse: {
               ...prevState.currentAdresse,
-              ville: value,
+              ville: value.toUpperCase(),
           },
           }));
       } else {
@@ -128,7 +128,7 @@ import { withRouter } from "react-router-dom";
           },
           currentAdresse: {
               ...prevState.currentAdresse,
-              ville: value,
+              ville: value.toUpperCase(),
           },
       }));
       }
@@ -170,7 +170,7 @@ import { withRouter } from "react-router-dom";
             },
             currentAdresse: {
               ...prevState.currentAdresse,
-              pays: value,
+              pays: value.toUpperCase(),
           },
           }));
       } else {
@@ -182,7 +182,7 @@ import { withRouter } from "react-router-dom";
           },
           currentAdresse: {
               ...prevState.currentAdresse,
-              pays: value,
+              pays: value.toUpperCase(),
           },
       }));
       }

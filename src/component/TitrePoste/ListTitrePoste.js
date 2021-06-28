@@ -108,7 +108,7 @@ class ListTitrePoste extends Component {
       this.setState({searchExpression: value}) 
     }
     if( name === "nbPage"){
-      this.setState({itemsPerPage: value}, () => {this.retrieveTitrePoste();}) 
+      this.setState({itemsPerPage: value, currentPage: 0 }, () => {this.retrieveTitrePoste();}) 
     }
   }
 

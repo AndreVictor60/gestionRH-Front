@@ -112,7 +112,7 @@ class ListPoste extends Component {
 
   handleChange(e) {
     const value = e.target.value;
-    this.setState({itemsPerPage: value}, () => {this.onchangeAllPoste();}) 
+    this.setState({itemsPerPage: value, currentPage: 0 }, () => {this.onchangeAllPoste();}) 
   }
 
   /*searchTitle() {
